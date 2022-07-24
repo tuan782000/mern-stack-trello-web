@@ -1,0 +1,90 @@
+@import '_setting.scss';
+
+.navbar-board {
+  height: $navbar-board-height;
+  padding: 0 ($gap * 2);
+  display: flex;
+  align-items: center;
+  background-color: $board-bg-color;
+  color: aliceblue;
+  .trungquandev-trello-container {
+    max-width: 100%;
+    .board-info {
+      display: inline-flex;
+      height: 100%;
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      div.divider {
+        padding: 0 8px;
+        &::before {
+          content: '|';
+          color: hsla(0,0%,100%,.24);
+        }
+      }
+      div.item {
+        padding: 6px 10px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+        &:hover {
+          cursor: pointer;
+          background-color: rgba(255, 255, 255, 0.4);
+        }
+        &.member-avatar {
+          padding: 0;
+          background-color: transparent;
+          display: inline-flex;
+          justify-content: center;
+          >* {
+            margin-right: 2px;
+          }
+          img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 0;
+            &:hover {
+              filter: brightness(120%);
+            }
+          }
+          span {
+            padding: 5px 8px;
+            background-color: rgba(255, 255, 255, 0.3);
+            
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.4);
+            }
+            &.more-members {
+              border-radius: 50%;
+            }
+            &.invite {
+              margin-left: 10px;
+              border-radius: 3px;
+            }
+          }
+        }
+      }
+    }
+    .board-actions {
+      display: inline-flex;
+      height: 100%;
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      div.item {
+        padding: 6px 10px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+        &:not(:first-child) {
+          margin-left: 4px;
+        }
+        &:hover {
+          cursor: pointer;
+          background-color: rgba(255, 255, 255, 0.4);
+        }
+      }
+    }
+  }
+}

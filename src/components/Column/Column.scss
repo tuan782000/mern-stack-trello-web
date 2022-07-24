@@ -1,0 +1,132 @@
+@import '_setting.scss';
+
+$column-header-height: 46px;
+$column-footer-height: 46px;
+
+$column-height: calc(#{$board-content-height} - #{$gap * 2});
+
+.column {
+  flex: 0 0 auto;
+  width: 300px;
+  height: $column-height;
+  margin-left: $gap;
+  > * {
+    background-color: $column-bg-color;
+    padding: 0 8px;
+  }
+  header.column-drag-handle {
+    padding: 5px 8px;
+    height: $column-header-height;
+    line-height: $column-header-height;
+    font-size: 16px;
+    font-weight: bold;
+    border-top-left-radius: $column-border-radius;
+    border-top-right-radius: $column-border-radius;
+    cursor: pointer;
+    display: flex;
+    .column-title {
+      flex: 90%;
+    }
+    .column-dropdown-actions {
+      flex: 10%;
+      .dropdown {
+        button.dropdown-btn {
+          padding: 0 $gap;
+          font-size: 16px;
+          height: 32px;
+          margin-top: -15px;
+          font-weight: bold;
+          letter-spacing: 1px;
+          background-color: $column-bg-color;
+          border-color: $column-bg-color;
+          color: $app-main-text-color;
+          &:after {
+            content: '...';
+            border: none;
+            vertical-align: 1.255em;
+          }
+          &:hover {
+            background-color: darken($column-bg-color, 10);
+            border-color: darken($column-bg-color, 10);
+          }
+        }
+        a.dropdown-item {
+          i {
+            margin-right: 5px;
+            color: #3498db;
+          }
+          &.remove-column {
+            i { color: $alert-danger; }
+          }
+        }
+      }
+      
+      .dropdown-menu {
+        padding: 0;
+        min-width: 200px;
+        a.dropdown-item {
+          padding: 0.1rem 1rem;
+          font-size: 14px;
+          &:not(:last-child) {
+            border-bottom: 1px solid darken($column-bg-color, 10);
+          }
+        }
+      }
+    }
+  }
+  footer {
+    padding-left: $gap;
+    height: $column-footer-height;
+    min-height: $gap;
+    line-height: $column-footer-height;
+    border-bottom-left-radius: $column-border-radius;
+    border-bottom-right-radius: $column-border-radius;
+    color: #888;
+    .footer-actions {
+      margin-left: 5px;
+      cursor: pointer;
+      &:hover {
+        color: $app-main-text-color;
+      }
+    }
+  }
+  .card-list {
+    margin: 0;
+    max-height: calc(#{$column-height} - #{$column-header-height} - #{$column-footer-height});
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      -webkit-appearance: none;
+    }
+    &::-webkit-scrollbar:vertical {
+      width: 11px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: darken($column-bg-color, 15);
+      border-right: 5px solid $column-bg-color;
+    }
+
+    .card-ghost {
+      transition: transform 0.18s ease;
+      transform: rotateZ(5deg);
+      font-weight: bold;
+    }
+    .card-ghost-drop{
+      transition: transform 0.18s ease-in-out;
+      transform: rotateZ(0deg);
+      font-weight: bold;
+    }
+    .card-drop-preview {
+      background-color: rgba(150, 150, 200, 0.1);
+      border: 1px dashed #abc;
+      margin: 5px;
+    }
+
+    .add-new-card-area {
+      .textarea-enter-new-card {
+        min-height: 54px;
+        max-height: 162px;
+      }
+    }
+  }
+}

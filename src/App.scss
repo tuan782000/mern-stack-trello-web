@@ -1,0 +1,70 @@
+@import '~bootstrap/scss/bootstrap';
+@import '_setting.scss';
+
+body {
+  margin: 0;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 14px;
+  line-height: 1.3em;
+}
+
+.trello-trungquandev-master {
+  height: 100vh;
+  overflow: hidden;
+  background-color: $board-bg-color;
+  color: $app-main-text-color;
+  .icon {
+    font-size: 14px;
+    margin: 0 3px;
+  }
+  .trungquandev-trello-container {
+    margin: 0 15px;
+    padding: 0;
+  }
+  .col-no-padding {
+    padding: 0;
+  }
+
+  textarea:focus, 
+  textarea.form-control:focus, 
+  input.form-control:focus, 
+  input[type=text]:focus, 
+  input[type=password]:focus, 
+  input[type=email]:focus, 
+  input[type=number]:focus, 
+  [type=text].form-control:focus, 
+  [type=password].form-control:focus, 
+  [type=email].form-control:focus, 
+  [type=tel].form-control:focus, 
+  [contenteditable].form-control:focus {
+    box-shadow: none;
+    border: 1px solid $input-border-color;
+  }
+  .btn:focus, .btn:active {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .trungquandev-content-editable {
+    background-color: inherit;
+    border: none;
+    font-size: inherit;
+    font-weight: inherit;
+    cursor: pointer;
+    &:focus {
+      background-color: white;
+    }
+  }
+
+  span.cancel-icon {
+    margin-left: $gap;
+    cursor: pointer;
+    i {
+      font-size: 18px;
+      color: $alert-danger;
+      &:hover {
+        color: darken($alert-danger, 10);
+      }
+    }
+  }
+}

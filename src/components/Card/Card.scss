@@ -1,0 +1,22 @@
+@import '_setting.scss';
+
+$card-border-radius: 4px;
+
+.card-item {
+  background-color: white;
+  border-radius: $card-border-radius;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  margin-bottom: $gap;
+
+  img.card-cover {
+    display: block;
+    max-width: 100%;
+    width: 100%;
+    border-top-left-radius: $card-border-radius;
+    border-top-right-radius: $card-border-radius;
+  }
+  div.title {
+    padding: 10px;
+  }
+}

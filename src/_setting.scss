@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600');
+
+$gap: 10px;
+
+// Height: appbar + boardbar + boardContent = 99vh, 1vh for scrollbar
+$app-max-height: 99vh;
+$navbar-app-height: 40px;
+$navbar-board-height: 52px;
+$board-content-height: calc(#{$app-max-height} - #{$navbar-app-height} - #{$navbar-board-height});
+
+// colors
+$app-main-text-color: #333;
+$board-bg-color: #0079bf;
+$input-border-color: #0079bf;
+$common-element-bg: rgba(255, 255, 255, .24);
+$column-bg-color: #ebecf0;
+$alert-danger: #ee5253;
+
+// Screens
+$screen-lg: 1201px;
+$screen-md: 992px;
+$screen-sm: 768px;
+$screen-phone: 480px;
+$screen-ip6-down: '(max-width: 375px)';
+
+$column-border-radius: 4px;

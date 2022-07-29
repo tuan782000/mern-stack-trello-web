@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { flushSync } from 'react-dom'
-import { Container, Draggable } from 'react-smooth-dnd'
+import { Container } from 'react-smooth-dnd'
 import {
   Container as BootstrapContainer,
   Row, Col, Form, Button
@@ -8,19 +8,22 @@ import {
 import { isEmpty, cloneDeep } from 'lodash'
 
 import './BoardContent.scss'
-import Column from 'components/Column/Column'
-import { mapOrder } from 'utilities/sorts'
+import ListColumns from 'components/ListColumns/ListColumns'
 import { applyDrag } from 'utilities/dragDrop'
 import {
-  fetchBoardDetails,
-  createNewColumn,
-  updateBoard,
-  updateColumn,
-  updateCard
+  createNewColumnAPI,
+  updateBoardAPI,
+  updateColumnAPI,
+  updateCardAPI
 } from 'actions/ApiCall'
 
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchFullBoardDetailsAPI, selectCurrentFullBoard, updateCurrentFullBoard } from 'redux/activeBoard/activeBoardSlice'
+
 function BoardContent() {
-  const [board, setBoard] = useState({})
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentFullBoard)
+
   const [columns, setColumns] = useState([])
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
@@ -34,11 +37,14 @@ function BoardContent() {
     // Sửa boardId ở đây chuẩn với id mà các em tạo trên Cloud MongoDB.
     // (các buổi học sau chúng ta sẽ làm chuẩn hơn việc lấy boardId từ URL, cứ yên tâm)
     const boardId = '629cf015973610228c951182'
-    fetchBoardDetails(boardId).then(board => {
-      setBoard(board)
-      setColumns(mapOrder(board.columns, board.columnOrder, '_id'))
-    })
-  }, [])
+    dispatch(fetchFullBoardDetailsAPI(boardId))
+  }, [dispatch])
+
+  useEffect(() => {
+    if (board) {
+      setColumns(board.columns)
+    }
+  }, [board])
 
   useEffect(() => {
     if (newColumnInputRef && newColumnInputRef.current) {
@@ -52,53 +58,87 @@ function BoardContent() {
   }
 
   const onColumnDrop = (dropResult) => {
-    let newColumns = cloneDeep(columns)
+    const originalColumns = cloneDeep(columns)
+    let newColumns = [...columns]
     newColumns = applyDrag(newColumns, dropResult)
 
-    let newBoard = cloneDeep(board)
+    const originalBoard = cloneDeep(board)
+    let newBoard = { ...board }
     newBoard.columnOrder = newColumns.map(c => c._id)
     newBoard.columns = newColumns
 
     setColumns(newColumns)
-    setBoard(newBoard)
+    dispatch(updateCurrentFullBoard(newBoard))
+
     // Call api update columnOrder in board details.
-    updateBoard(newBoard._id, newBoard).catch(() => {
-      setColumns(columns)
-      setBoard(board)
-    })
+    updateBoardAPI(newBoard._id, newBoard)
+      .catch(() => {
+        setColumns(originalColumns)
+        dispatch(updateCurrentFullBoard(originalBoard))
+      })
   }
 
   const onCardDrop = (columnId, dropResult) => {
     if (dropResult.removedIndex !== null || dropResult.addedIndex !== null) {
-      let newColumns = cloneDeep(columns)
+      const originalColumns = cloneDeep(columns)
+      let newColumns = [...columns]
 
+      // https://redux-toolkit.js.org/usage/immer-reducers
+      // Vì thằng currentColumn hiện tại nó là dữ liệu lấy ra từ newColumns, mà newColumns là lấy ra từ redux
+      // Redux nó không cho Mutating (đột biến) trực tiếp dữ liệu kiểu Object.data = '123'
+      // Nên chúng ta sẽ cần clone cái curentColumn ra thành một Object khác để tính toán ghi đè lại dữ liệu mới vào thằng newColumns
       let currentColumn = newColumns.find(c => c._id === columnId)
-      currentColumn.cards = applyDrag(currentColumn.cards, dropResult)
-      currentColumn.cardOrder = currentColumn.cards.map(i => i._id)
+      if (!currentColumn) return
+      const newCards = applyDrag(currentColumn.cards, dropResult)
+      const newCardOrder = newCards.map(i => i._id)
+      currentColumn = {
+        ...currentColumn,
+        cards: newCards,
+        cardOrder: newCardOrder
+      }
+      // Tiếp theo sẽ dùng Array.splice để ghi đè đúng thằng column hiện tại vào vị trí của nó trong cái newColumns (từ Redux Store)
+      // Hành động ghi đè dữ liệu vào mảng này thì Redux nó cho phép
+      const currentColumnIndex = newColumns.findIndex(c => c._id === columnId)
+      newColumns.splice(currentColumnIndex, 1, currentColumn)
+
+      const originalBoard = cloneDeep(board)
+      let newBoard = { ...board }
+      newBoard.columnOrder = newColumns.map(c => c._id)
+      newBoard.columns = newColumns
 
       /**
        * Automatic batching for fewer renders in React 18
        * https://github.com/reactwg/react-18/discussions/21
        */
       flushSync(() => setColumns(newColumns))
+      flushSync(() => dispatch(updateCurrentFullBoard(newBoard)))
+
       if (dropResult.removedIndex !== null && dropResult.addedIndex !== null) {
         /**
          * Action: move card inside its column
          * 1 - Call api update cardOrder in current column
          */
-        updateColumn(currentColumn._id, currentColumn).catch(() => setColumns(columns))
+        updateColumnAPI(currentColumn._id, currentColumn)
+          .catch(() => {
+            flushSync(() => setColumns(originalColumns))
+            flushSync(() => dispatch(updateCurrentFullBoard(originalBoard)))
+          })
       } else {
         /**
          * Action: Move card beetween two columns
          */
         // 1 - Call api update cardOrder in current column
-        updateColumn(currentColumn._id, currentColumn).catch(() => setColumns(columns))
+        updateColumnAPI(currentColumn._id, currentColumn)
+          .catch(() => {
+            flushSync(() => setColumns(originalColumns))
+            flushSync(() => dispatch(updateCurrentFullBoard(originalBoard)))
+          })
 
         if (dropResult.addedIndex !== null) {
           let currentCard = cloneDeep(dropResult.payload)
           currentCard.columnId = currentColumn._id
           // 2 - Call api update columnId in current card
-          updateCard(currentCard._id, currentCard)
+          updateCardAPI(currentCard._id, currentCard)
         }
       }
     }
@@ -115,7 +155,7 @@ function BoardContent() {
       title: newColumnTitle.trim()
     }
     // Call API
-    createNewColumn(newColumnToAdd).then(column => {
+    createNewColumnAPI(newColumnToAdd).then(column => {
       let newColumns = [...columns]
       newColumns.push(column)
 
@@ -124,7 +164,8 @@ function BoardContent() {
       newBoard.columns = newColumns
 
       setColumns(newColumns)
-      setBoard(newBoard)
+      dispatch(updateCurrentFullBoard(newBoard))
+
       setNewColumnTitle('')
       toggleOpenNewColumnForm()
     })
@@ -149,7 +190,7 @@ function BoardContent() {
     newBoard.columns = newColumns
 
     setColumns(newColumns)
-    setBoard(newBoard)
+    dispatch(updateCurrentFullBoard(newBoard))
   }
 
   return (
@@ -165,15 +206,11 @@ function BoardContent() {
           className: 'column-drop-preview'
         }}
       >
-        {columns.map((column, index) => (
-          <Draggable key={index}>
-            <Column
-              column={column}
-              onCardDrop={onCardDrop}
-              onUpdateColumnState={onUpdateColumnState}
-            />
-          </Draggable>
-        ))}
+        <ListColumns
+          columns={columns}
+          onCardDrop={onCardDrop}
+          onUpdateColumnState={onUpdateColumnState}
+        />
       </Container>
 
       <BootstrapContainer className="trungquandev-trello-container">

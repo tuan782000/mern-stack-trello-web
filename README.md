@@ -17,13 +17,8 @@ $ yarn start
 
 ### Guide for this repository is here:
 
-https://trungquandev.com/khoa-hoc-lap-trinh-mern-stack-100-du-an-thuc-te-chat-luong/
 
-Author: Trung Quân
-
-Blog: https://trungquandev.com/
-
-CV: https://cv.trungquandev.com/
+Author: Nguyễn Thái Tuấn & Hồ Nguyễn Minh Phong
 
 "A little bit of fragrance always clings to the hands that gives flowers!"
 

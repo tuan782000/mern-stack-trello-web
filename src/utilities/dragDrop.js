@@ -1,5 +1,5 @@
 /**
- * Created by trungquandev.com's author on 04/05/2021
+ * Created by tuan nguyen author on 04/05/2021
  */
 export const applyDrag = (arr, dragResult) => {
   const { removedIndex, addedIndex, payload } = dragResult

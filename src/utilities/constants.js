@@ -1,5 +1,5 @@
 /**
- * Created by trungquandev.com's author on 04/11/2021
+ * Created by tuan nguyen on 04/11/2021
  */
 
 export const API_ROOT = 'http://localhost:8017'

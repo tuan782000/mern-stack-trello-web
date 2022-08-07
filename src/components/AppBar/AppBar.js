@@ -26,9 +26,9 @@ function AppBar() {
           </Col>
           <Col md={2} sm={2} xs={12} className="col-no-padding">
             <div className="app-branding text-center">
-              <a href="https://trungquandev.com" target="blank">
+              <a href="https://github.com/tuan782000" target="blank">
                 <img src={trungquandevLogo} className="top-logo" alt="trunguandev-logo" />
-                <span className="trungquandev-slogan">trungquandev</span>
+                <span className="trungquandev-slogan">Trello Web APP</span>
               </a>
             </div>
           </Col>

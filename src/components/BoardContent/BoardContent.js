@@ -32,7 +32,7 @@ function BoardContent() {
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
   const onNewColumnTitleChange = (e) => setNewColumnTitle(e.target.value)
-
+  // Reload lại trang, reload giao diện ||
   useEffect(() => {
     // Sửa boardId ở đây chuẩn với id mà các em tạo trên Cloud MongoDB.
     // (các buổi học sau chúng ta sẽ làm chuẩn hơn việc lấy boardId từ URL, cứ yên tâm)

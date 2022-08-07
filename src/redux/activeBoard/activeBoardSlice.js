@@ -14,7 +14,7 @@ export const fetchFullBoardDetailsAPI = createAsyncThunk('activeBoard/fetchFullB
   return request.data
 })
 
-// Khởi tạo một slice trong redux
+// Khởi tạo một slice trong redux || slice: lát cắt
 export const activeBoardSlice = createSlice({
   name: 'activeBoard',
   initialState,

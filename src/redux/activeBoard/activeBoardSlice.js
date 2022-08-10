@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
+import authorizedAxiosInstance from 'utilities/customAxios'
 import { API_ROOT } from 'utilities/constants'
 import { mapOrder } from 'utilities/sorts'
 
@@ -10,7 +10,7 @@ const initialState = {
 
 // Các hành động gọi api (bất đồng bộ) và cập nhật dữ liệu vào Redux, dùng createAsyncThunk đi kèm với extraReducers
 export const fetchFullBoardDetailsAPI = createAsyncThunk('activeBoard/fetchFullBoardDetailsAPI', async (boardId) => {
-  const request = await axios.get(`${API_ROOT}/v1/boards/${boardId}`)
+  const request = await authorizedAxiosInstance.get(`${API_ROOT}/v1/boards/${boardId}`)
   return request.data
 })
 

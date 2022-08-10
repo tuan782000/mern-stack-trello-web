@@ -169,7 +169,7 @@ function Column(props) {
       <footer>
         {openNewCardForm &&
           <div className="add-new-card-actions">
-            <Button variant="success" size="sm" onClick={addNewCard}>Add card</Button>
+            <Button className='tqd-send' variant="success" size="sm" onClick={addNewCard}>Add card</Button>
             <span className="cancel-icon" onClick={toggleOpenNewCardForm}>
               <i className="fa fa-trash icon" />
             </span>

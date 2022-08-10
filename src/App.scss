@@ -68,3 +68,11 @@ body {
     }
   }
 }
+
+.tqd-send {
+  transition: all .3s ease-in-out;
+  &.tqd-waiting {
+    opacity: .5;
+    pointer-events: none;
+  }
+}

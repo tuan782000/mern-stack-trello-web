@@ -12,4 +12,4 @@ function ListCards(props) {
   ))
 }
 
-export default React.memo(ListCards) 
+export default React.memo(ListCards)

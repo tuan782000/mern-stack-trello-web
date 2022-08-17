@@ -234,7 +234,7 @@ function BoardContent() {
                 onChange={onNewColumnTitleChange}
                 onKeyDown={event => (event.key === 'Enter') && addNewColumn()}
               />
-              <Button variant="success" size="sm" onClick={addNewColumn}>Add column</Button>
+              <Button className='tqd-send' variant="success" size="sm" onClick={addNewColumn}>Add column</Button>
               <span className="cancel-icon" onClick={toggleOpenNewColumnForm}>
                 <i className="fa fa-trash icon" />
               </span>

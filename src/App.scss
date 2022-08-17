@@ -76,3 +76,21 @@ body {
     pointer-events: none;
   }
 }
+
+.loading-progress {
+  width: 180px;
+  height: 180px;
+  margin: 60px auto;
+  background-image: url(~resources/images/spinning-circles.svg);
+  background-repeat: no-repeat;
+  position: relative;
+  background-position: center;
+  text-align: center;
+  p {
+    position: absolute;
+    margin: 0;
+    top: 80%;
+    left: 50%;
+    transform: translate(-40%, -50%)
+  }
+}

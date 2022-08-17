@@ -6,12 +6,23 @@ import {
   FIELD_REQUIRED_MESSAGE,
   PASSWORD_RULE_MESSAGE,
   EMAIL_RULE_MESSAGE,
-  fieldErrorMessage } from 'utilities/validators'
+  fieldErrorMessage
+} from 'utilities/validators'
+import { signUpUserApi } from 'actions/ApiCall'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
+
 function SignUp() {
   const { register, handleSubmit, watch, formState: { errors } } = useForm()
+  const navigate = useNavigate()
+
   const onSubmitSignUp = (data) => {
-    console.log(data)
+    toast.promise(signUpUserApi(data), { pending: 'Signin up ...' })
+      .then(user => {
+        navigate(`/signIn?successEmail=${user.email}`, { replace: true })
+      })
   }
+
   return (
     <form className="auth__form form__sign-up" onSubmit={handleSubmit(onSubmitSignUp)}>
       <h2 className="auth__form__title">Sign Up</h2>
@@ -30,6 +41,7 @@ function SignUp() {
         />
       </div>
       {fieldErrorMessage(errors, 'email')}
+
       <div className="auth__form__input-field">
         <i className="fa fa-lock"></i>
         <input
@@ -45,6 +57,7 @@ function SignUp() {
         />
       </div>
       {fieldErrorMessage(errors, 'password')}
+
       <div className="auth__form__input-field">
         <i className="fa fa-lock"></i>
         <input

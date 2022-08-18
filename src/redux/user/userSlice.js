@@ -18,6 +18,7 @@ export const signInUserAPI = createAsyncThunk('user/signInUserAPI', async (data)
 export const userSlice = createSlice({
   name: 'user',
   initialState,
+  // đồng bộ
   reducers: {
     // Lưu ý luôn là ở đây cần cặp ngoặc nhọn cho function trong reducer cho dù code bên trong chỉ có 1 dòng, đây là rule của Redux
     // https://redux-toolkit.js.org/usage/immer-reducers#mutating-and-returning-state
@@ -25,6 +26,7 @@ export const userSlice = createSlice({
       state.currentUser = null
     }
   },
+  // Bất đồng bộ
   extraReducers: (builder) => {
     builder.addCase(signInUserAPI.fulfilled, (state, action) => {
       const user = action.payload
@@ -41,6 +43,9 @@ export const { clearCurrentUser } = userSlice.actions
 // Selectors: mục đích là dành cho các components bên dưới gọi tới nó để lấy dữ liệu từ trong redux store ra sử dụng
 export const selectCurrentUser = (state) => {
   return state.user.currentUser
+}
+export const selectIsAuthenticated = (state) => {
+  return state.user.isAuthenticated
 }
 
 // Export default thằng Active Board Reducer

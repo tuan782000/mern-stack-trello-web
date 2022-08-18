@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLocation, Link } from 'react-router-dom'
+import { useLocation, Link, Navigate } from 'react-router-dom'
 
 import './Auth.scss'
 import authSignUpBg from 'resources/images/auth-sign-up-bg.webp'
@@ -7,10 +7,18 @@ import authSignInBg from 'resources/images/auth-sign-in-bg.png'
 import SignIn from './SignIn/SignIn'
 import SignUp from './SignUp/SignUp'
 
+import { useSelector } from 'react-redux'
+import { selectIsAuthenticated } from 'redux/user/userSlice'
+
 function Auth() {
   const location = useLocation()
-  console.log(location)
   const signUpMode = location.pathname === '/signUp'
+
+  const isAuthenticated = useSelector(selectIsAuthenticated)
+  if (isAuthenticated) {
+    return <Navigate to='/' replace={true} />
+  }
+
   return (
     <div className={`auth__container ${signUpMode ? 'sign-up-mode': ''}`}>
       <div className="auth__container__forms">

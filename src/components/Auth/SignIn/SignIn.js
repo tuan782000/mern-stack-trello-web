@@ -19,13 +19,12 @@ function SignIn() {
   const successEmail = searchParams.get('successEmail')
   const verifiedEmail = searchParams.get('verifiedEmail')
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm()
+  const { register, handleSubmit, formState: { errors } } = useForm()
   const navigate = useNavigate()
 
   const onSubmitSignIn = (data) => {
     toast.promise(dispatch(signInUserAPI(data)), { pending: 'Signing in...' })
       .then(res => {
-        console.log(res)
         // Cần có kiểm tra res.error ở đây vì redux createAsyncThunk luôn trả về kết quả dẫn đến toast.promise luôn chạy vào then(), không vào catch() khi có lỗi
         if (!res.error) {
           navigate('/', { replace: true })

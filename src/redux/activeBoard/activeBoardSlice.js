@@ -18,6 +18,7 @@ export const fetchFullBoardDetailsAPI = createAsyncThunk('activeBoard/fetchFullB
 export const activeBoardSlice = createSlice({
   name: 'activeBoard',
   initialState,
+  // đồng bộ
   reducers: {
     // Lưu ý luôn là ở đây cần cặp ngoặc nhọn cho function trong reducer cho dù code bên trong chỉ có 1 dòng, đây là rule của Redux
     // https://redux-toolkit.js.org/usage/immer-reducers#mutating-and-returning-state
@@ -25,6 +26,7 @@ export const activeBoardSlice = createSlice({
       state.currentFullBoard = action.payload
     }
   },
+  // Bất đồng bộ
   extraReducers: (builder) => {
     builder.addCase(fetchFullBoardDetailsAPI.fulfilled, (state, action) => {
       let fullBoard = action.payload

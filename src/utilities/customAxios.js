@@ -3,6 +3,7 @@ import { toast } from 'react-toastify'
 
 let authorizedAxiosInstance = axios.create()
 authorizedAxiosInstance.defaults.timeout = 1000 * 60 * 10 // 10 minutes
+authorizedAxiosInstance.defaults.withCredentials = true // Make Axios send cookies in its requests automatically.
 
 // Kỹ thuật dùng javascript kết hợp css pointer-event để chặn user click nhanh tại bất kỳ chỗ nào có hành động click gọi api
 // Đây là một kỹ thuật rất hay mà không phải dev nào cũng biết.
@@ -44,7 +45,6 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
     errorMessage = error?.response?.data?.errors
   }
   toast.error(errorMessage)
-
 
   return Promise.reject(error)
 })

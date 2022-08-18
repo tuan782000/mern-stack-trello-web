@@ -5,19 +5,24 @@ import reportWebVitals from './reportWebVitals'
 import 'font-awesome/css/font-awesome.min.css'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
-
 import { store } from './redux/store'
 import { Provider } from 'react-redux'
-
 import { BrowserRouter } from 'react-router-dom'
+
+import { PersistGate } from 'redux-persist/integration/react'
+import { persistStore } from 'redux-persist'
+
+let persistor = persistStore(store)
 
 const container = document.getElementById('root')
 const root = createRoot(container)
 root.render(
   <BrowserRouter>
     <Provider store={store}>
-      <App />
-      <ToastContainer />
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+        <ToastContainer />
+      </PersistGate>
     </Provider>
   </BrowserRouter>
 )

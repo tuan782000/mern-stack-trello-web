@@ -117,3 +117,33 @@ $appbar-bg-color: #0067a3;
     }
   }
 }
+.common-dropdown {
+  .dropdown-toggle {
+    background-color: inherit;
+    border: none;
+    &:focus {
+      background-color: inherit !important;
+      border: none !important;
+    }
+  }
+  .dropdown-menu {
+    padding: 0;
+    min-width: 200px;
+    max-width: 450px;
+    .dropdown-item {
+      padding: 1rem;
+      font-size: 15px;
+      &:not(:last-child) {
+        border-bottom: 1px solid darken($column-bg-color, 10);
+      }
+      i.icon {
+        margin-right: 10px;
+        color: #3498db;
+        &.danger {
+          color: $alert-danger;
+        }
+      }
+    }
+  }
+}
+

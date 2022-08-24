@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import authorizedAxiosInstance from 'utilities/customAxios'
 import { API_ROOT } from 'utilities/constants'
+import { toast } from 'react-toastify'
+import customHistory from 'utilities/customHistory'
 
 // khởi tạo giá trị trong redux
 const initialState = {
@@ -11,6 +13,14 @@ const initialState = {
 // Các hành động gọi api (bất đồng bộ) và cập nhật dữ liệu vào Redux, dùng createAsyncThunk đi kèm với extraReducers
 export const signInUserAPI = createAsyncThunk('user/signInUserAPI', async (data) => {
   const request = await authorizedAxiosInstance.post(`${API_ROOT}/v1/users/sign_in`, data)
+  return request.data
+})
+
+export const signOutUserAPI = createAsyncThunk('user/signOutUserAPI', async () => {
+  const request = await authorizedAxiosInstance.delete(`${API_ROOT}/v1/users/sign_out`)
+  toast.success('User signed out successfully.')
+  customHistory.replace('/signIn')
+
   return request.data
 })
 
@@ -32,6 +42,10 @@ export const userSlice = createSlice({
       const user = action.payload
       state.currentUser = user
       state.isAuthenticated = true
+    })
+    builder.addCase(signOutUserAPI.fulfilled, (state) => {
+      state.currentUser = null
+      state.isAuthenticated = false
     })
   }
 })

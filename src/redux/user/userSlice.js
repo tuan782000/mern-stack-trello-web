@@ -16,9 +16,11 @@ export const signInUserAPI = createAsyncThunk('user/signInUserAPI', async (data)
   return request.data
 })
 
-export const signOutUserAPI = createAsyncThunk('user/signOutUserAPI', async () => {
+export const signOutUserAPI = createAsyncThunk('user/signOutUserAPI', async (showSuccessMsg = true) => {
   const request = await authorizedAxiosInstance.delete(`${API_ROOT}/v1/users/sign_out`)
-  toast.success('User signed out successfully.')
+  if (showSuccessMsg) {
+    toast.success('User signed out successfully.')
+  }
   customHistory.replace('/signIn')
 
   return request.data

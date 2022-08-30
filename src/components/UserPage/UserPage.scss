@@ -1,0 +1,59 @@
+.user__page {
+    .user__page__header {
+      min-height: 200px;
+      background-color: #f4f5f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      .avatar {
+        input[type=file] {
+          display: none;
+        }
+      }
+      .display-name {
+        font-size: 24px;
+        font-weight: 500;
+      }
+      .username {
+        color: #5e6c84;
+      }
+    }
+    .user__page__content {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      background-color: #f4f5f7;
+      .user__tabs {
+        li.nav-item {
+          button {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px 25px;
+          }
+        }
+      }
+      .tab-content {
+        width: 100%;
+        background-color: white;
+        text-align: center;
+        min-height: calc(100vh - 200px);
+        .tab-inner-content {
+          margin: 0 auto;
+          max-width: 530px;
+          .notice {
+            text-align: left;
+            h4 { font-weight: bold; }
+            .notice__message {
+              background-color: #F4F5F7;
+              color: #5e6c84;
+              padding: 15px;
+              line-height: 18px;
+              white-space: pre-line;
+            }
+          }
+        }
+      }
+    }
+  }
+  

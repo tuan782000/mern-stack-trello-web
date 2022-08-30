@@ -5,6 +5,7 @@ import trungquandevLogo from 'resources/images/logo-trungquandev-transparent-bg-
 import UserAvatar from 'components/Common/UserAvatar'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentUser, signOutUserAPI } from 'redux/user/userSlice'
+import { Link } from 'react-router-dom'
 
 function AppBar() {
   const dispatch = useDispatch()
@@ -52,13 +53,27 @@ function AppBar() {
                       </Dropdown.Toggle>
 
                       <Dropdown.Menu>
-                        <Dropdown.Item className="account tqd-send">
+                        <Dropdown.Item
+                          className="account tqd-send"
+                          as={Link}
+                          to={`/u/${user?.username}?tab=account`}
+                        >
                           <i className="icon fa fa-user" />Account
                         </Dropdown.Item>
-                        <Dropdown.Item className="settings tqd-send">
+
+                        <Dropdown.Item
+                          className="settings tqd-send"
+                          as={Link}
+                          to={`/u/${user?.username}?tab=settings`}
+                        >
                           <i className="icon fa fa-cog" />Settings
                         </Dropdown.Item>
-                        <Dropdown.Item className="help tqd-send">
+
+                        <Dropdown.Item
+                          className="help tqd-send"
+                          as={Link}
+                          to={`/u/${user?.username}?tab=help`}
+                        >
                           <i className="icon fa fa-question-circle" />Help
                         </Dropdown.Item>
 

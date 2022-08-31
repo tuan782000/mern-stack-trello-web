@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useSearchParams, useNavigate, createSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate, createSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { Tabs, Tab, Form, Button } from 'react-bootstrap'
 import './UserPage.scss'
@@ -8,24 +8,25 @@ import trelloAccountImg from 'resources/images/trello-account.svg'
 import trelloSettingsImg from 'resources/images/trello-settings.png'
 import trelloHelpImg from 'resources/images/trello-help.png'
 
-// import { signInUserAPI } from 'actions/ApiCall'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectCurrentUser, updateUserAPI } from 'redux/user/userSlice'
 import {
-  signInUserAPI
-} from 'redux/user/userSlice'
-import {
-  EMAIL_RULE,
   PASSWORD_RULE,
   fieldErrorMessage,
-  FIELD_REQUIRED_MESSAGE,
-  PASSWORD_RULE_MESSAGE,
-  EMAIL_RULE_MESSAGE
+  PASSWORD_RULE_MESSAGE
 } from 'utilities/validators'
 import { toast } from 'react-toastify'
 
 const UserPage = () => {
   const dispatch = useDispatch()
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const currentUser = useSelector(selectCurrentUser)
+
+  // For multiple forms: https://stackoverflow.com/a/60277873/8324172
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+    defaultValues: {
+      displayName: currentUser.displayName
+    }
+  })
   let navigate = useNavigate()
 
   let [searchParams] = useSearchParams()
@@ -37,23 +38,25 @@ const UserPage = () => {
   }, [tab])
 
   const onSubmitGeneralInformation = data => {
-    console.log('general')
-    console.log(data)
-    // toast.promise(dispatch(signInUserAPI(data)), {
-    //   pending: 'Signing in...'
-    // }).then(() => {
-    //   navigate('/', { replace: true })
-    // })
+    const { displayName } = data
+    if (displayName === currentUser?.displayName) return
+
+    toast.promise(dispatch(updateUserAPI({ displayName })), { pending: 'Updating ...' })
   }
 
   const onSubmitChangePassword = data => {
-    console.log('change password')
-    console.log(data)
-    // toast.promise(dispatch(signInUserAPI(data)), {
-    //   pending: 'Signing in...'
-    // }).then(() => {
-    //   navigate('/', { replace: true })
-    // })
+    const { currentPassword, newPassword, newPasswordConfirmation } = data
+    if (!currentPassword || !newPassword || !newPasswordConfirmation) {
+      toast.error('Please enter full password fields.')
+      return
+    }
+
+    toast.promise(dispatch(updateUserAPI({ currentPassword, newPassword })), { pending: 'Updating ...' })
+      .then((res) => {
+        setValue('currentPassword', null),
+        setValue('newPassword', null),
+        setValue('newPasswordConfirmation', null)
+      })
   }
 
   const handleSelectTab = (selectedTab) => {
@@ -81,8 +84,8 @@ const UserPage = () => {
             </Form.Group>
           </Form>
         </div>
-        <div className="display-name">Quan Do</div>
-        <div className="username">@trungquandev</div>
+        <div className="display-name">{currentUser.displayname}</div>
+        <div className="username">@{currentUser.username}</div>
       </div>
       <div className="user__page__content">
         <Tabs activeKey={activeTab} className="user__tabs" onSelect={handleSelectTab}>
@@ -102,7 +105,7 @@ const UserPage = () => {
                 <h5><strong>General Information</strong></h5>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Email address</Form.Label>
-                  <Form.Control type="email" name="email" value="" disabled />
+                  <Form.Control type="email" name="email" value={currentUser.email} disabled />
                   <Form.Text className="text-muted">
                     We will never share your email with anyone else.
                   </Form.Text>
@@ -110,12 +113,20 @@ const UserPage = () => {
 
                 <Form.Group className="mb-3" controlId="formBasicUsername">
                   <Form.Label>Username</Form.Label>
-                  <Form.Control type="text" name="username" value="" disabled />
+                  <Form.Control type="text" name="username" value={currentUser.username} disabled />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicDisplayName">
                   <Form.Label>Display Name</Form.Label>
-                  <Form.Control type="text" name="displayName" placeholder="Enter your display name..." />
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter your display name..."
+                    {...register('displayName', {
+                      minLength: { value: 3, message: 'Min Length is 3 characters' },
+                      maxLength: { value: 50, message: 'Max Length is 50 characters' }
+                    })}
+                  />
+                  {fieldErrorMessage(errors, 'displayName')}
                 </Form.Group>
 
                 <Form.Group className="mb-5 text-right">
@@ -127,15 +138,39 @@ const UserPage = () => {
                 <h5 className="mt-4"><strong>Change Password</strong></h5>
                 <Form.Group className="mb-3" controlId="formBasicCurrentPassword">
                   <Form.Label>Current Password</Form.Label>
-                  <Form.Control type="password" name="current_password" />
+                  <Form.Control
+                    type="password"
+                    {...register('currentPassword', {
+                      pattern: {
+                        value: PASSWORD_RULE,
+                        message: PASSWORD_RULE_MESSAGE
+                      }
+                    })}
+                  />
+                  {fieldErrorMessage(errors, 'currentPassword')}
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicNewPassword">
                   <Form.Label>New Password</Form.Label>
-                  <Form.Control type="password" name="new_password" />
+                  <Form.Control
+                    type="password"
+                    {...register('newPassword', {
+                      pattern: {
+                        value: PASSWORD_RULE,
+                        message: PASSWORD_RULE_MESSAGE
+                      }
+                    })}
+                  />
+                  {fieldErrorMessage(errors, 'newPassword')}
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicNewPasswordConfirmation">
                   <Form.Label>New Password Confirmation</Form.Label>
-                  <Form.Control type="password" name="new_password_confirmation" />
+                  <Form.Control
+                    type="password"
+                    {...register('newPasswordConfirmation', {
+                      validate: (value) => value === watch('newPassword') || 'New Password Confirmation does not match.'
+                    })}
+                  />
+                  {fieldErrorMessage(errors, 'newPasswordConfirmation')}
                 </Form.Group>
 
                 <Form.Group className="mb-5 text-right">
@@ -144,6 +179,7 @@ const UserPage = () => {
               </Form>
             </div>
           </Tab>
+
           <Tab eventKey="settings" title="Settings">
             <div className="tab-inner-content my-5 settings">
               <div className="media">

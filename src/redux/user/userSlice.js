@@ -26,6 +26,13 @@ export const signOutUserAPI = createAsyncThunk('user/signOutUserAPI', async (sho
   return request.data
 })
 
+export const updateUserAPI = createAsyncThunk('user/updateUserAPI', async (data) => {
+  const request = await authorizedAxiosInstance.put(`${API_ROOT}/v1/users/update`, data)
+
+  if (request.data) {toast.success('User updated successfully.')}
+  return request.data
+})
+
 // Khởi tạo một slice trong redux || slice: lát cắt
 export const userSlice = createSlice({
   name: 'user',
@@ -48,6 +55,10 @@ export const userSlice = createSlice({
     builder.addCase(signOutUserAPI.fulfilled, (state) => {
       state.currentUser = null
       state.isAuthenticated = false
+    })
+    builder.addCase(updateUserAPI.fulfilled, (state, action) => {
+      const user = action.payload
+      state.currentUser = user
     })
   }
 })

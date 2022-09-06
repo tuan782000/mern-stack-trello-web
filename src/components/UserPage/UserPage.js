@@ -9,13 +9,16 @@ import trelloSettingsImg from 'resources/images/trello-settings.png'
 import trelloHelpImg from 'resources/images/trello-help.png'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { selectCurrentUser, updateUserAPI } from 'redux/user/userSlice'
+import { selectCurrentUser, updateUserAPI, signOutUserAPI } from 'redux/user/userSlice'
 import {
   PASSWORD_RULE,
   fieldErrorMessage,
-  PASSWORD_RULE_MESSAGE
+  PASSWORD_RULE_MESSAGE,
+  singleFileValidator
 } from 'utilities/validators'
 import { toast } from 'react-toastify'
+import ConfirmModal from 'components/Common/ConfirmModal'
+import { MODAL_ACTION_CONFIRM } from 'utilities/constants'
 
 const UserPage = () => {
   const dispatch = useDispatch()
@@ -32,6 +35,7 @@ const UserPage = () => {
   let [searchParams] = useSearchParams()
   const tab = searchParams.get('tab')
   const [activeTab, setActiveTab] = useState('account')
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
 
   useEffect(() => {
     setActiveTab(tab)
@@ -56,6 +60,27 @@ const UserPage = () => {
         setValue('currentPassword', null),
         setValue('newPassword', null),
         setValue('newPasswordConfirmation', null)
+
+        if (!res.error) {
+          setShowConfirmModal(true)
+        }
+      })
+  }
+
+  const onSubmitChangeAvatar = (event) => {
+    const err = singleFileValidator(event.target?.files[0])
+    if (err) {
+      toast.error(err)
+      return
+    }
+
+    let reqData = new FormData()
+    reqData.append('avatar', event.target?.files[0])
+
+    toast.promise(dispatch(updateUserAPI(reqData)), { pending: 'Updating ...' })
+      .then(() => {
+        //reset filed input avatar
+        event.target.value=''
       })
   }
 
@@ -63,6 +88,14 @@ const UserPage = () => {
     navigate({
       search: `?${createSearchParams({ tab: selectedTab })}`
     })
+  }
+
+  const onConfirmModalAction = (type) => {
+    if (type === MODAL_ACTION_CONFIRM) {
+      // gọi api signout
+      dispatch(signOutUserAPI())
+    }
+    setShowConfirmModal(false)
   }
 
   return (
@@ -73,19 +106,22 @@ const UserPage = () => {
             <Form.Group controlId="formBasicFile">
               <Form.Label className='mb-0'>
                 <UserAvatar
-                  username="quando"
+                  user={currentUser}
                   width="50px"
                   height="50px"
                   fontSize="18px"
                   tooltip="Click to change your avatar!"
                 />
               </Form.Label>
-              <Form.Control type="file" />
+              <Form.Control
+                type="file"
+                onChange={onSubmitChangeAvatar}
+              />
             </Form.Group>
           </Form>
         </div>
-        <div className="display-name">{currentUser.displayname}</div>
-        <div className="username">@{currentUser.username}</div>
+        <div className="display-name">{currentUser?.displayname}</div>
+        <div className="username">@{currentUser?.username}</div>
       </div>
       <div className="user__page__content">
         <Tabs activeKey={activeTab} className="user__tabs" onSelect={handleSelectTab}>
@@ -219,6 +255,12 @@ const UserPage = () => {
           </Tab>
         </Tabs>
       </div>
+      <ConfirmModal
+        show={showConfirmModal}
+        onAction={onConfirmModalAction}
+        title="Confirm Sign-out!"
+        content="Would you like to Sign-out?"
+      />
     </>
   )
 }

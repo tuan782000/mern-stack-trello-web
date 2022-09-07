@@ -33,6 +33,12 @@ $appbar-bg-color: #0067a3;
             font-size: 15px;
           }
         }
+        &.boards {
+          a {
+            color: white;
+            text-decoration: none;
+          }
+        }
         &.search {
           padding: 6px 0;
           .group-search {

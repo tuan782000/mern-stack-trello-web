@@ -177,3 +177,23 @@ body {
   text-align: right;
 }
 
+.pagination {
+  justify-content: end;
+  margin-top: 3rem;
+  .page-item {
+    .page-link {
+      color: #0079bf;
+      box-shadow: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    &.active {
+      .page-link {
+        background-color: #0079bf;
+        border-color: #0079bf;
+        color: white;
+      }
+    }
+  }
+}
+

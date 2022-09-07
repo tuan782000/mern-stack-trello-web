@@ -11,6 +11,7 @@ import Auth from 'components/Auth/Auth'
 import AccountVerification from 'components/Auth/AccountVerification/AccountVerification'
 import { selectIsAuthenticated } from 'redux/user/userSlice'
 import UserPage from 'components/UserPage/UserPage'
+import Boards from 'components/Boards/Boards'
 
 function App() {
   const isAuthenticated = useSelector(selectIsAuthenticated)
@@ -31,6 +32,13 @@ function App() {
         <div className="user__page">
           <AppBar/>
           <UserPage/>
+        </div>
+      }/>
+
+      <Route path='/u/:username/boards' element={
+        <div className="boards__page">
+          <AppBar/>
+          <Boards/>
         </div>
       }/>
 

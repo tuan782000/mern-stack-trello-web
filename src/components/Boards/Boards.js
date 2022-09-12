@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useSearchParams, createSearchParams } from 'react-router-dom'
 import {
   Container as BootstrapContainer,
   Row, Col, ListGroup, Card, Form
@@ -9,16 +10,40 @@ import CreateNewBoardModal from './CreateNewBoardModal'
 import { fetchBoardsAPI } from 'actions/ApiCall'
 import LoadingSpinner from 'components/Common/LoadingSpinner'
 import { isEmpty } from 'lodash'
+import { useDebounce } from 'customHooks/useDebounce'
 
-function Boards (props) {
+function Boards () {
   const [showCreateBoardModal, setShowCreateBoardModal] = useState(false)
   const [boards, setBoards] = useState(null)
+  const [totalPages, setTotalPages] = useState(null)
+  const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
-    fetchBoardsAPI().then(res => {
-      setBoards(res)
+    const searchPath = `?${createSearchParams(searchParams)}`
+    fetchBoardsAPI(searchPath).then(res => {
+      setBoards(res.results)
+      setTotalPages(res.totalResults)
     })
-  }, [])
+  }, [searchParams])
+
+  // Khi người dùng click sang một page tiếp theo
+  const onPageChange = (selectedPage) => {
+    setSearchParams({
+      ...Object.fromEntries([...searchParams]),
+      currentPage: selectedPage
+      //itemsPerPage: 1 // for test
+    })
+  }
+
+  const debounceSearchBoard = useDebounce((event) => {
+    const searchTerm = event.target?.value
+
+    setSearchParams({
+      ...Object.fromEntries([...searchParams]),
+      'q[title]': searchTerm
+      // 'q[description]': searchTerm
+    })
+  }, 1000)
 
   return (
     <BootstrapContainer>
@@ -45,6 +70,8 @@ function Boards (props) {
                     size="sm"
                     type="text"
                     placeholder="Search boards..."
+                    defaultValue={searchParams.get('q[title]') || ''}
+                    onChange={debounceSearchBoard}
                   />
                 </Form>
               </ListGroup.Item>
@@ -72,7 +99,11 @@ function Boards (props) {
                     ))}
                   </Row>
                 </div>
-                <CustomPagination currentItems={[...Array(350).keys()]} />
+                <CustomPagination
+                  currentPage={searchParams.get('currentPage') || 1}
+                  totalPages={totalPages}
+                  onPageChange = {onPageChange}
+                />
               </>
           }
         </Col>

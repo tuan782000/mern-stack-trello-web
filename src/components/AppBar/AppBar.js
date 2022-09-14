@@ -20,7 +20,7 @@ function AppBar() {
               <div className="item all"><i className="fa fa-th" /></div>
               <div className="item home"><i className="fa fa-home" /></div>
               <div className="item boards">
-                <Link to={`/u/${user?.username}/boards`}>
+                <Link to={`/u/${user?.username}/boards?currentPage=1`}>
                   <i className="fa fa-columns" />&nbsp;&nbsp;<strong>Boards</strong>
                 </Link>
               </div>

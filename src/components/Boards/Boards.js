@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSearchParams, createSearchParams } from 'react-router-dom'
+import { useSearchParams, createSearchParams, Link } from 'react-router-dom'
 import {
   Container as BootstrapContainer,
   Row, Col, ListGroup, Card, Form
@@ -7,7 +7,7 @@ import {
 import CustomPagination from 'components/Common/Pagination'
 import './Boards.scss'
 import CreateNewBoardModal from './CreateNewBoardModal'
-import { fetchBoardsAPI } from 'actions/ApiCall'
+import { fetchBoardsAPI, createNewBoardAPI } from 'actions/ApiCall'
 import LoadingSpinner from 'components/Common/LoadingSpinner'
 import { isEmpty } from 'lodash'
 import { useDebounce } from 'customHooks/useDebounce'
@@ -45,11 +45,27 @@ function Boards () {
     })
   }, 1000)
 
+  const createNewBoard = async (boardData) => {
+    try {
+      await createNewBoardAPI(boardData)
+
+      const searchPath = `?${createSearchParams(searchParams)}`
+      const listBoards = await fetchBoardsAPI(searchPath)
+      setBoards(listBoards.results)
+      setTotalPages(listBoards.totalResults)
+
+      return true
+    } catch (error) {
+      return error
+    }
+  }
+
   return (
     <BootstrapContainer>
       <CreateNewBoardModal
         show={showCreateBoardModal}
         onClose={() => setShowCreateBoardModal(false)}
+        onCreateNewBoard={createNewBoard}
       />
       <Row>
         <Col md={3} className="mt-5">
@@ -89,7 +105,7 @@ function Boards () {
                   <Row xs={1} md={2} lg={3} className="g-4">
                     {boards.map(b => (
                       <Col key = {b._id}>
-                        <Card>
+                        <Card as={Link} to={`/b/${b._id}`} className="text-decoration-none">
                           <Card.Body>
                             <Card.Title className="card__title">{b.title}</Card.Title>
                             <Card.Text className="card__description">{b.description}</Card.Text>

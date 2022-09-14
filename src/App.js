@@ -9,24 +9,31 @@ import BoardBar from 'components/BoardBar/BoardBar'
 import BoardContent from 'components/BoardContent/BoardContent'
 import Auth from 'components/Auth/Auth'
 import AccountVerification from 'components/Auth/AccountVerification/AccountVerification'
-import { selectIsAuthenticated } from 'redux/user/userSlice'
+import { selectIsAuthenticated, selectCurrentUser } from 'redux/user/userSlice'
 import UserPage from 'components/UserPage/UserPage'
 import Boards from 'components/Boards/Boards'
+import ActiveCardModal from 'components/Common/ActiveCardModal'
 
 function App() {
   const isAuthenticated = useSelector(selectIsAuthenticated)
+  const currentUser = useSelector(selectCurrentUser)
 
   return (
     <Routes>
       <Route exact path='/' element={
         !isAuthenticated
           ? <Navigate to='/signIn' replace={true} />
-          : <div className="trello-trungquandev-master">
-            <AppBar />
-            <BoardBar />
-            <BoardContent />
-          </div>
+          : <Navigate to={`/u/${currentUser?.username}/boards?currentPage=1`} replace={true} />
       } />
+
+      <Route path='/b/:boardId' element={
+        <div className="trello-trungquandev-master">
+          <AppBar />
+          <BoardBar />
+          <BoardContent />
+          <ActiveCardModal/>
+        </div>
+      }/>
 
       <Route path='/u/:username' element={
         <div className="user__page">

@@ -5,12 +5,15 @@ import {
   fieldErrorMessage
 } from 'utilities/validators'
 
-function CreateNewBoardModal({ show, onClose }) {
-  const { register, handleSubmit, formState: { errors } } = useForm()
+function CreateNewBoardModal({ show, onClose, onCreateNewBoard }) {
+  const { register, handleSubmit, reset, formState: { errors } } = useForm()
 
   const onSubmit = (data) => {
-    console.log('submitted data: ', data)
-    // onClose()
+    onCreateNewBoard(data)
+      .then(() => {
+        onClose()
+        reset()
+      })
   }
 
   return (
@@ -38,7 +41,7 @@ function CreateNewBoardModal({ show, onClose }) {
               {...register('title', {
                 required: { value: true, message: 'Title is required.' },
                 minLength: { value: 3, message: 'Min Length is 3 characters' },
-                maxLength: { value: 20, message: 'Max Length is 20 characters' }
+                maxLength: { value: 50, message: 'Max Length is 50 characters' }
               })}
             />
             {fieldErrorMessage(errors, 'title')}
@@ -58,7 +61,7 @@ function CreateNewBoardModal({ show, onClose }) {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={onClose}>Close</Button>
-          <Button variant="success" type="submit">Update</Button>
+          <Button variant="success" type="submit">Create</Button>
         </Modal.Footer>
       </Form>
     </Modal>

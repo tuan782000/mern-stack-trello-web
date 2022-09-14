@@ -197,3 +197,254 @@ body {
   }
 }
 
+// Dùng chung class member__avatars cho cả trong card details lẫn ở Board Bar
+.member__avatars {
+  padding: 0;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  flex-flow: wrap;
+  gap: 4px;
+  &__item {
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 0;
+      &:hover {
+        filter: brightness(110%);
+      }
+    }
+    .more-members {
+      display: inline-flex;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+    }
+    .users__select {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      i {
+        font-size: 13px;
+      }
+      .users__select__content {
+        display: inline-flex;
+        width: 100%;
+        height: 100%;
+        background-color: #e2e4e9;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        &:hover {
+          background-color: darken($color: #e2e4e9, $amount: 5);
+        }
+      }
+      
+      .users__select__popover {
+        .users__select__popover__close_btn {
+          position: absolute;
+          width: auto;
+          font-size: 20px;
+          top: 4px;
+          right: 10px;
+          cursor: pointer;
+          &:hover {
+            color: $alert-danger;
+          }
+        }
+        position: absolute;
+        top: 34px;
+        left: 5px;
+        min-width: 300px;
+        min-height: 100px;
+        padding: 15px 20px;
+        border-radius: 3px;
+        box-shadow: 0 8px 16px -4px #091e4240, 0 0 0 1px #091e4214;
+        background-color: white;
+        .title {
+          color: #5e6c84;
+          font-size: 13px;
+          font-weight: 600;
+          line-height: 16px;
+        }
+        .users-list {
+          display: flex;
+          flex-flow: wrap;
+          gap: 4px;
+        }
+      }
+    }
+    .invite {
+      display: inline-flex;
+      width: 60px;
+      height: 100%;
+      margin-left: 6px;
+      border-radius: 3px;
+      background-color: #e2e4e9;
+      align-items: center;
+      justify-content: center;
+      &:hover {
+        background-color: darken($color: #e2e4e9, $amount: 5);
+      }
+    }
+  }
+}
+
+.card__modal {
+  // font-size: 16px;
+  color: #172b4d;
+  &__cover {
+    margin-bottom: 1rem; // mb-3
+    img.card__modal__cover__img {
+      display: block;
+      max-width: 100%;
+      width: 100%;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      max-height: 300px;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+  &__header {
+    position: relative;
+    &__subject_icon {
+      position: absolute;
+      width: auto;
+      font-size: 20px;
+      top: 12px;
+      left: 1px;
+    }
+    &__close_btn {
+      position: absolute;
+      width: auto;
+      font-size: 20px;
+      top: 4px;
+      right: 0;
+      cursor: pointer;
+      &:hover {
+        color: $alert-danger;
+      }
+    }
+    &__title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+  }
+  &__body {
+    .card__element__title {
+      color: #5e6c84;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 16px;
+      margin-bottom: 8px;
+    }
+    .card__modal__description {
+      &__title {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 600;
+        gap: 16px;
+      }
+      &__content {
+        .tqd-markdown-editor {
+          box-shadow: none;
+          .w-md-editor-aree {
+            border-radius: 0;
+          }
+        }
+      }
+    }
+    .card__modal__activity {
+      &__title {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 600;
+        gap: 16px;
+      }
+      &__content {
+        .comment__form {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          .write-comment {
+            width: 100%;
+          }
+        }
+        .comments__list {
+          &__item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            .user-comment {
+              width: 100%;
+              .user-info {
+                .username {
+                  font-size: 16px;
+                  font-weight: bold;
+                  margin-right: 8px;
+                }
+                .datetime {
+                  font-size: 14px;
+                  color: #5e6c84;
+                }
+              }
+              .comment-value {
+                margin-top: 8px;
+                padding: 8px 12px;
+                border-radius: 3px;
+                box-shadow: 1px 1px 3px -1px #091e4240, 0 0 0 1px #091e4214;
+                word-wrap: break-word;
+              }
+            }
+          }
+        }
+      }
+    }
+    .menu__group {
+      margin-bottom: 20px;
+      &__title {
+        color: #5e6c84;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 16px;
+      }
+      &__item {
+        background-color: #091e420a;
+        border: none;
+        border-radius: 3px;
+        box-shadow: none;
+        box-sizing: border-box;
+        cursor: pointer;
+        display: block;
+        height: 32px;
+        margin-top: 8px;
+        max-width: 300px;
+        overflow: hidden;
+        padding: 6px 12px;
+        position: relative;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        user-select: none;
+        white-space: nowrap;
+        &:hover {
+          background-color: #e2e4e9;
+        }
+        i {
+          margin-right: 6px;
+        }
+      }
+    }
+  }
+}
+

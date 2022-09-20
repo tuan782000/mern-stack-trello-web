@@ -354,6 +354,12 @@ body {
         font-size: 18px;
         font-weight: 600;
         gap: 16px;
+        i.enable-edit-description {
+          cursor: pointer;
+          &:hover {
+            color: $board-bg-color;
+          }
+        }
       }
       &__content {
         .tqd-markdown-editor {

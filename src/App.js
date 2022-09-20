@@ -13,10 +13,12 @@ import { selectIsAuthenticated, selectCurrentUser } from 'redux/user/userSlice'
 import UserPage from 'components/UserPage/UserPage'
 import Boards from 'components/Boards/Boards'
 import ActiveCardModal from 'components/Common/ActiveCardModal'
+import { selectCurrentActiveCard } from 'redux/activeCard/activeCardSlice'
 
 function App() {
   const isAuthenticated = useSelector(selectIsAuthenticated)
   const currentUser = useSelector(selectCurrentUser)
+  const currentActiveCard = useSelector(selectCurrentActiveCard)
 
   return (
     <Routes>
@@ -31,7 +33,7 @@ function App() {
           <AppBar />
           <BoardBar />
           <BoardContent />
-          <ActiveCardModal/>
+          {currentActiveCard && <ActiveCardModal/>}
         </div>
       }/>
 

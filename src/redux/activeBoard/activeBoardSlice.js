@@ -24,6 +24,24 @@ export const activeBoardSlice = createSlice({
     // https://redux-toolkit.js.org/usage/immer-reducers#mutating-and-returning-state
     updateCurrentFullBoard: (state, action) => {
       state.currentFullBoard = action.payload
+    },
+    updateCardInBoard: (state, action) => {
+      // console.log(current(state.currentFullBoard))
+      // Updating Nested Data
+      // https://redux-toolkit.js.org/usage/immer-reducers#updating-nested-data
+      const incomingCard = action.payload
+      const column = state.currentFullBoard.columns.find(i => i._id === incomingCard.columnId)
+      if (column) {
+        const card = column.cards.find(i => i._id === incomingCard._id)
+        if (card) {
+          const updateKeys = ['title', 'memberIds', 'description', 'comments', 'cover']
+          updateKeys.forEach(key => {
+            card[key] = incomingCard[key]
+          })
+          // card.title = incomingCard.title // Theo link trên => cách này oke
+          // card = { ...incomingCard } // Cách này không được, cứ làm theo hướng dẫn từ trang chủ ở trên
+        }
+      }
     }
   },
   // Bất đồng bộ
@@ -44,7 +62,7 @@ export const activeBoardSlice = createSlice({
 
 // Actions: dành cho các components bên dưới gọi tới nó để cập nhật lại dữ liệu thông qua reducer (chạy đồng bộ)
 // Để ý ở trên thì không thấy properties actions đâu cả, bởi vì những cái actions này đơn giản là được thằng redux tạo tự động theo tên của reducer nhé.
-export const { updateCurrentFullBoard } = activeBoardSlice.actions
+export const { updateCurrentFullBoard, updateCardInBoard } = activeBoardSlice.actions
 
 // Selectors: mục đích là dành cho các components bên dưới gọi tới nó để lấy dữ liệu từ trong redux store ra sử dụng
 export const selectCurrentFullBoard = (state) => {

@@ -1,62 +1,70 @@
 import React, { useState } from 'react'
+import { toast } from 'react-toastify'
 import { Container as BootstrapContainer, Row, Col, Modal, Form } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import MDEditor from '@uiw/react-md-editor'
 import rehypeSanitize from 'rehype-sanitize'
 import { fieldErrorMessage } from 'utilities/validators'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectCurrentUser } from 'redux/user/userSlice'
+import { updateCardInBoard } from 'redux/activeBoard/activeBoardSlice'
 import {
-  selectCurrentUser
-} from 'redux/user/userSlice'
+  clearCurrentActiveCard,
+  updateCurrentActiveCard,
+  selectCurrentActiveCard
+} from 'redux/activeCard/activeCardSlice'
 import UserAvatar from 'components/Common/UserAvatar'
 import UserSelectPopover from 'components/Common/UserSelectPopover'
 import { saveContentAfterPressEnter, selectAllInlineText } from 'utilities/contentEditable'
+import {updateCardAPI} from 'actions/ApiCall'
 
 function ActiveCardModal() {
+  const dispatch = useDispatch()
   const { register, handleSubmit, formState: { errors }, reset } = useForm()
   const currentUser = useSelector(selectCurrentUser)
+  const currentActiveCard = useSelector(selectCurrentActiveCard)
 
-  const mkdStr = `
-  # Markdown Editor
-  
-  ---
-  
-  **Hello world!!!**
-  
-  [![](https://avatars.githubusercontent.com/u/1680273?s=80&v=4)](https://avatars.githubusercontent.com/u/1680273?v=4)
-  
-  \`\`\`javascript
-  import React from "react";
-  import ReactDOM from "react-dom";
-  import MEDitor from '@uiw/react-md-editor';
-  
-  \`\`\`
-  `
-  let currentCard = {
-    title: 'Làm tí coffee không?',
-    description: mkdStr
-  }
-  const [cardDescription, setCardDescription] = useState(currentCard.description)
+
+  const [cardDescription, setCardDescription] = useState(currentActiveCard?.description)
   const [markdownMode, setMarkdownMode] = useState(false)
 
-  const handleCardTitleChange = () => {
-    console.log('card title change ne')
-  }
-  const debounceUpdateCardTitle = () => {
-    console.log('goi api update card title ne')
+  const beforeUpdateCardTitle = (e) => {
+    if (!e?.target?.value) {
+      toast.error('Please enter card Title')
+      return false
+    }
+    if (e?.target?.value === currentActiveCard?.title) {
+      return false
+    }
+    updateCard({ title: e?.target?.value })
   }
 
-  const debounceUpdateCardDescription = () => {
-    console.log(cardDescription)
+  const beforeUpdateCardDescription = (e) => {
     disableMarkdownMode()
+    if (e?.target?.value === currentActiveCard?.description) {
+      return false
+    }
+    updateCard({ description: e?.target?.value })
   }
+
+  const updateCard = (updateData) => {
+    updateCardAPI(currentActiveCard._id, updateData)
+      .then(updatedCard => {
+        dispatch(updateCurrentActiveCard(updatedCard))
+        dispatch(updateCardInBoard(updatedCard))
+      })
+  }
+
   const enableMarkdownMode = () => setMarkdownMode(true)
   const disableMarkdownMode = () => setMarkdownMode(false)
+  const onClose = () => {
+    dispatch(clearCurrentActiveCard())
+  }
 
   return (
     <Modal
-      show={true}
-      // onHide={onClose}
+      show={currentActiveCard}
+      onHide={onClose}
       backdrop="static"
       keyboard={true}
       animation={true}
@@ -78,7 +86,7 @@ function ActiveCardModal() {
               <span className="card__modal__header__subject_icon">
                 <i className="fa fa-credit-card" />
               </span>
-              <span className="card__modal__header__close_btn">
+              <span className="card__modal__header__close_btn" onClick={onClose}>
                 <i className="fa fa-close" />
               </span>
               <Col className="mb-3 px-5">
@@ -86,9 +94,8 @@ function ActiveCardModal() {
                   size="md"
                   type="text"
                   className="trungquandev-content-editable card__modal__header__title"
-                  defaultValue={currentCard.title}
-                  onChange={handleCardTitleChange}
-                  onBlur={debounceUpdateCardTitle}
+                  defaultValue={currentActiveCard?.title}
+                  onBlur={beforeUpdateCardTitle}
                   onKeyDown={saveContentAfterPressEnter}
                   onClick={selectAllInlineText}
                   onMouseDown={e => e.preventDefault()}
@@ -122,7 +129,7 @@ function ActiveCardModal() {
                 <div className="card__modal__description mb-4">
                   <div className="card__modal__description__title mb-3">
                     <div><i className="fa fa-list" /></div>
-                    <div>Description</div>
+                    <div>Description&nbsp;&nbsp;<i className="fa fa-edit enable-edit-description" onClick={enableMarkdownMode} /></div>
                   </div>
                   <div className="card__modal__description__content" data-color-mode="light">
                     {markdownMode
@@ -131,7 +138,7 @@ function ActiveCardModal() {
                           className="tqd-markdown-editor"
                           value={cardDescription}
                           onChange={setCardDescription}
-                          onBlur={debounceUpdateCardDescription}
+                          onBlur={beforeUpdateCardDescription}
                           previewOptions={{
                             rehypePlugins: [[rehypeSanitize]]
                           }}
@@ -147,6 +154,7 @@ function ActiveCardModal() {
                     }
                   </div>
                 </div>
+                <hr />
                 <div className="card__modal__activity mb-4">
                   <div className="card__modal__activity__title mb-3">
                     <div><i className="fa fa-tasks" /></div>
@@ -155,11 +163,11 @@ function ActiveCardModal() {
                   <div className="card__modal__activity__content">
                     <div className="comment__form mb-4">
                       <div className="user-avatar">
-                          <UserAvatar
-                            user={currentUser}
-                            width="32px"
-                            height="32px"
-                          />
+                        <UserAvatar
+                          user={currentUser}
+                          width="32px"
+                          height="32px"
+                        />
                       </div>
                       <div className="write-comment">
                         <Form.Group controlId="card-comment-input" >

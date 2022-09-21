@@ -49,6 +49,9 @@ export const activeBoardSlice = createSlice({
     builder.addCase(fetchFullBoardDetailsAPI.fulfilled, (state, action) => {
       let fullBoard = action.payload
 
+      fullBoard.users = fullBoard.owners.concat(fullBoard.members)
+      fullBoard.totalUsers = fullBoard.users?.length
+
       // Sắp xếp lại columns và cards theo các giá trị columnOrder, cardOrder
       fullBoard.columns = mapOrder(fullBoard.columns, fullBoard.columnOrder, '_id')
       fullBoard.columns.forEach(c => {

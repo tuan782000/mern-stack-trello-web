@@ -4,7 +4,7 @@ import { Container as BootstrapContainer, Row, Col, Modal, Form } from 'react-bo
 import { useForm } from 'react-hook-form'
 import MDEditor from '@uiw/react-md-editor'
 import rehypeSanitize from 'rehype-sanitize'
-import { fieldErrorMessage } from 'utilities/validators'
+import { singleFileValidator } from 'utilities/validators'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectCurrentUser } from 'redux/user/userSlice'
 import { updateCardInBoard } from 'redux/activeBoard/activeBoardSlice'
@@ -16,14 +16,15 @@ import {
 import UserAvatar from 'components/Common/UserAvatar'
 import UserSelectPopover from 'components/Common/UserSelectPopover'
 import { saveContentAfterPressEnter, selectAllInlineText } from 'utilities/contentEditable'
-import {updateCardAPI} from 'actions/ApiCall'
+import { updateCardAPI } from 'actions/ApiCall'
+import { isEmpty } from 'lodash'
+import moment from 'moment'
 
 function ActiveCardModal() {
   const dispatch = useDispatch()
   const { register, handleSubmit, formState: { errors }, reset } = useForm()
   const currentUser = useSelector(selectCurrentUser)
   const currentActiveCard = useSelector(selectCurrentActiveCard)
-
 
   const [cardDescription, setCardDescription] = useState(currentActiveCard?.description)
   const [markdownMode, setMarkdownMode] = useState(false)
@@ -47,16 +48,52 @@ function ActiveCardModal() {
     updateCard({ description: e?.target?.value })
   }
 
-  const updateCard = (updateData) => {
-    updateCardAPI(currentActiveCard._id, updateData)
-      .then(updatedCard => {
-        dispatch(updateCurrentActiveCard(updatedCard))
-        dispatch(updateCardInBoard(updatedCard))
-      })
+  const beforeUpdateCardCover = (e) => {
+    const err = singleFileValidator(e.target?.files[0])
+    if (err) {
+      toast.error(err)
+      e.target.value= ''
+      return
+    }
+
+    let reqData = new FormData()
+    reqData.append('cover', e.target?.files[0])
+
+    toast.promise(
+      updateCard(reqData)
+        .then(() => e.target.value = '')
+        .catch(() => e.target.value = ''),
+      { pending: 'Updating...' }
+    )
+  }
+
+  const beforeUpdateCardComment = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      if (!e?.target?.value) {
+        return false
+      }
+
+      const commentToUpdate = {
+        userAvatar: currentUser?.avatar,
+        userDisplayName: currentUser?.displayName,
+        content: e?.target?.value
+      }
+      updateCard({ newComment: commentToUpdate })
+      e.target.value = ''
+    }
+  }
+
+  const updateCard = async (updateData) => {
+    const updatedcard = await updateCardAPI(currentActiveCard._id, updateData)
+    dispatch(updateCurrentActiveCard(updatedcard))
+    dispatch(updateCardInBoard(updatedcard))
+    return updateCard
   }
 
   const enableMarkdownMode = () => setMarkdownMode(true)
   const disableMarkdownMode = () => setMarkdownMode(false)
+
   const onClose = () => {
     dispatch(clearCurrentActiveCard())
   }
@@ -73,16 +110,18 @@ function ActiveCardModal() {
       <Form className="common__form">
         <Modal.Body>
           <BootstrapContainer className="card__modal">
-            <Row className="card__modal__cover">
-              <Col>
-                <img
-                  src="https://trungquandev.com/wp-content/uploads/2021/05/trungquandev-cover-animation-scaled.jpg"
-                  className="card__modal__cover__img"
-                  alt="trungquandev-alt-img"
-                />
-              </Col>
-            </Row>
-            <Row className="card__modal__header">
+            { currentActiveCard?.cover &&
+              <Row className="card__modal__cover">
+                <Col>
+                  <img
+                    src={currentActiveCard.cover}
+                    className="card__modal__cover__img"
+                    alt="trungquandev-alt-img"
+                  />
+                </Col>
+              </Row>
+            }
+            <Row className="card__modal__header mt-2">
               <span className="card__modal__header__subject_icon">
                 <i className="fa fa-credit-card" />
               </span>
@@ -171,59 +210,38 @@ function ActiveCardModal() {
                       </div>
                       <div className="write-comment">
                         <Form.Group controlId="card-comment-input" >
-                          <Form.Control as="textarea" rows={1} placeholder="Write a comment..." />
+                          <Form.Control
+                            as="textarea"
+                            rows={1}
+                            placeholder="Write a comment..."
+                            onKeyDown={beforeUpdateCardComment}
+                          />
                         </Form.Group>
                       </div>
                     </div>
                     <div className="comments__list">
-                      <div className="comments__list__item">
-                        <div className="user-avatar">
-                          <UserAvatar
-                            user={currentUser}
-                            width="32px"
-                            height="32px"
-                          />
-                        </div>
-                        <div className="user-comment">
-                          <div className="user-info">
-                            <span className="username">Trungquandev Official</span>
-                            <span className="datetime">Jun 21 at 10:39 PM</span>
+                      {isEmpty(currentActiveCard?.comments) && <div style={{ marginLeft: '42px' }}>No comment here!</div>}
+                      {currentActiveCard?.comments?.map((i, index) => (
+                        <div className="comments__list__item" key={index}>
+                          <div className="user-avatar">
+                            <UserAvatar
+                              user={{
+                                displayName: i.userDisplayName,
+                                avatar: i.userAvatar
+                              }}
+                              width="32px"
+                              height="32px"
+                            />
                           </div>
-                          <div className="comment-value">This is an example comment!</div>
-                        </div>
-                      </div>
-                      <div className="comments__list__item">
-                        <div className="user-avatar">
-                          <UserAvatar
-                            user={currentUser}
-                            width="32px"
-                            height="32px"
-                          />
-                        </div>
-                        <div className="user-comment">
-                          <div className="user-info">
-                            <span className="username">Trungquandev Official</span>
-                            <span className="datetime">Jun 21 at 10:39 PM</span>
+                          <div className="user-comment">
+                            <div className="user-info">
+                              <span className="username">{i.userDisplayName}</span>
+                              <span className="datetime">{i.createdAt && moment(i.createdAt).format('llll')}</span>
+                            </div>
+                            <div className="comment-value">{i.content}</div>
                           </div>
-                          <div className="comment-value">This is an example comment!</div>
                         </div>
-                      </div>
-                      <div className="comments__list__item">
-                        <div className="user-avatar">
-                          <UserAvatar
-                            user={currentUser}
-                            width="32px"
-                            height="32px"
-                          />
-                        </div>
-                        <div className="user-comment">
-                          <div className="user-info">
-                            <span className="username">Trungquandev Official</span>
-                            <span className="datetime">Jun 21 at 10:39 PM</span>
-                          </div>
-                          <div className="comment-value">This is an example comment!</div>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -249,9 +267,18 @@ function ActiveCardModal() {
                   <div className="menu__group__item">
                     <i className="fa fa-paperclip" /> Attachment
                   </div>
-                  <div className="menu__group__item">
-                    <i className="fa fa-window-maximize" /> Cover
-                  </div>
+                  <Form.Group controlId="formBasicCardCover">
+                    <Form.Label className='mb-0' style={{ cursor: 'pointer', width: '100%' }}>
+                      <div className="menu__group__item">
+                        <i className="fa fa-window-maximize" /> Cover
+                      </div>
+                    </Form.Label>
+                    <Form.Control
+                      type="file"
+                      style={{ display: 'none' }}
+                      onChange={beforeUpdateCardCover}
+                    />
+                  </Form.Group>
                 </div>
                 <div className="menu__group">
                   <div className="menu__group__title">Power-Ups</div>

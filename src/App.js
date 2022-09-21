@@ -33,7 +33,7 @@ function App() {
           <AppBar />
           <BoardBar />
           <BoardContent />
-          {currentActiveCard && <ActiveCardModal/>}
+          {currentActiveCard && <ActiveCardModal />}
         </div>
       }/>
 

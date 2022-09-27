@@ -1,6 +1,6 @@
 import React from 'react'
 import './AppBar.scss'
-import { Container as BootstrapContainer, Row, Col, InputGroup, FormControl, Dropdown } from 'react-bootstrap'
+import { Container as BootstrapContainer, Row, Col, InputGroup, FormControl, Dropdown, Button, Badge } from 'react-bootstrap'
 import trungquandevLogo from 'resources/images/logo-trungquandev-transparent-bg-192x192.png'
 import UserAvatar from 'components/Common/UserAvatar'
 import { useDispatch, useSelector } from 'react-redux'
@@ -47,7 +47,42 @@ function AppBar() {
             <div className="user-actions">
               <div className="item quick"><i className="fa fa-plus-square-o" /></div>
               <div className="item news"><i className="fa fa-info-circle" /></div>
-              <div className="item notification"><i className="fa fa-bell-o" /></div>
+              <div className="item notification">
+                <div className='common-dropdown'>
+                  <Dropdown autoClose="outside">
+                    <Dropdown.Toggle id="dropdown-basic" size="sm">
+                      {/* <i className="fa fa-bell icon" /> */}
+                      <i className="fa fa-bell icon ring" />
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      <div className="notification__item__header">
+          Notifications
+                      </div>
+
+                      <div className="notification__item__wrapper">
+                        <Dropdown.Item className="notification__item">
+                          <div className="notification__item__content">
+                            <strong>Trungquandev</strong> had invited you to join the board: <strong>Development 01.</strong>
+                          </div>
+                          <div className="notification__item__actions">
+                            <Button variant="success" type="button" size="sm" className="px-4">Accept</Button>
+                            <Button variant="secondary" type="button" size="sm" className="px-4">Reject</Button>
+                          </div>
+                          <div className="notification__item__actions">
+                            <Badge bg="success">Accepted</Badge>
+                          </div>
+                          <div className="notification__item__actions">
+                            <Badge bg="info">Wed, Sep 21, 2022 9:05 PM</Badge>
+                            {/* <Badge bg="info">{i.createdAt && moment(i.createdAt).format('llll')}</Badge> */}
+                          </div>
+                        </Dropdown.Item>
+                      </div>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              </div>
+
               {user &&
                 <div className="item user-avatar">
                   <div className='common-dropdown'>

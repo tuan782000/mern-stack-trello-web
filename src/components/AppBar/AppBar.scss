@@ -119,6 +119,47 @@ $appbar-bg-color: #0067a3;
             }
           }
         }
+        &.notification {
+          padding: 0;
+          .dropdown-toggle::after {
+            display: none;
+          }
+          .common-dropdown {
+            .dropdown-menu {
+              min-width: 350px;
+              .notification__item__header {
+                text-align: center;
+                padding: 10px 0;
+                font-size: 15px;
+                font-weight: 600;
+                color: white;
+                border-bottom: 1px solid darken(#0097e6, 10);
+                background-color: #0097e6;
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
+              }
+              .notification__item__wrapper {
+                max-height: 700px;
+                overflow-y: auto;
+                .notification__item {
+                  white-space: pre-wrap;
+                  word-wrap: break-word;
+                  padding: 1rem 2rem;
+                  &__actions {
+                    margin-top: 8px;
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 8px;
+                  }
+                  &:active {
+                    background-color: #E9ECEF;
+                    color: $app-main-text-color;
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

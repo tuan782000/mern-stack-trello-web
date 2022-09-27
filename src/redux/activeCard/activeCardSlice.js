@@ -12,7 +12,13 @@ export const activeCardSlice = createSlice({
       state.currentActiveCard = null
     },
     updateCurrentActiveCard: (state, action) => {
-      state.currentActiveCard = action.payload
+      const incomingCard = action.payload
+      const reverseCardComments = Array.isArray(incomingCard.comments) ? [...incomingCard.comments].reverse() : []
+
+      state.currentActiveCard = {
+        ...incomingCard,
+        comments: reverseCardComments
+      }
     }
   },
   // eslint-disable-next-line no-unused-vars

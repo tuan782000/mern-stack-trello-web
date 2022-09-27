@@ -61,3 +61,9 @@ export const createNewBoardAPI = async (data) => {
   toast.success('Board created successfuly!')
   return request.data
 }
+
+export const inviteUserToBoardAPI = async (data) => {
+  const request = await authorizedAxiosInstance.post(`${API_ROOT}/v1/invitations/board`, data)
+  toast.success('User invited to board successfuly!')
+  return request.data
+ }

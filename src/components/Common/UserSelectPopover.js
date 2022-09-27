@@ -20,7 +20,7 @@ function UserSelectPopover({ label, users=[] }) {
           </span>
           <div className="title mb-2 text-center">Board members</div>
           <div className="users-list">
-            {/* {users.map((u, index) => (
+            {users.map((u, index) => (
               <div className="user" key={index}>
                 <UserAvatar
                   user={u}
@@ -29,39 +29,7 @@ function UserSelectPopover({ label, users=[] }) {
                   fontSize="14px"
                 />
               </div>
-            ))} */}
-            <div className="user">
-              <UserAvatar
-                // user={u}
-                width="28px"
-                height="28px"
-                fontSize="14px"
-              />
-            </div>
-            <div className="user">
-              <UserAvatar
-                // user={u}
-                width="28px"
-                height="28px"
-                fontSize="14px"
-              />
-            </div>
-            <div className="user">
-              <UserAvatar
-                // user={u}
-                width="28px"
-                height="28px"
-                fontSize="14px"
-              />
-            </div>
-            <div className="user">
-              <UserAvatar
-                // user={u}
-                width="28px"
-                height="28px"
-                fontSize="14px"
-              />
-            </div>
+            ))}
           </div>
         </div>
       }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './AppBar.scss'
 import { Container as BootstrapContainer, Row, Col, InputGroup, FormControl, Dropdown, Button, Badge } from 'react-bootstrap'
 import trungquandevLogo from 'resources/images/logo-trungquandev-transparent-bg-192x192.png'
@@ -6,10 +6,18 @@ import UserAvatar from 'components/Common/UserAvatar'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentUser, signOutUserAPI } from 'redux/user/userSlice'
 import { Link } from 'react-router-dom'
+import { selectCurrentNotifications, fetchInvitationsAPI } from 'redux/notifications/notificationsSlice'
+import { isEmpty } from 'lodash'
+import moment from 'moment'
 
 function AppBar() {
   const dispatch = useDispatch()
   const user = useSelector(selectCurrentUser)
+  const notifications = useSelector(selectCurrentNotifications)
+
+  useEffect(() => {
+    dispatch(fetchInvitationsAPI())
+  }, [dispatch])
 
   return (
     <nav className="navbar-app">
@@ -61,22 +69,42 @@ function AppBar() {
                       </div>
 
                       <div className="notification__item__wrapper">
-                        <Dropdown.Item className="notification__item">
-                          <div className="notification__item__content">
-                            <strong>Trungquandev</strong> had invited you to join the board: <strong>Development 01.</strong>
-                          </div>
-                          <div className="notification__item__actions">
-                            <Button variant="success" type="button" size="sm" className="px-4">Accept</Button>
-                            <Button variant="secondary" type="button" size="sm" className="px-4">Reject</Button>
-                          </div>
-                          <div className="notification__item__actions">
-                            <Badge bg="success">Accepted</Badge>
-                          </div>
-                          <div className="notification__item__actions">
-                            <Badge bg="info">Wed, Sep 21, 2022 9:05 PM</Badge>
-                            {/* <Badge bg="info">{i.createdAt && moment(i.createdAt).format('llll')}</Badge> */}
-                          </div>
-                        </Dropdown.Item>
+                        {isEmpty(notifications) &&
+                             <Dropdown.Item className="notification__item">
+                               <div className="notification__item__content">You have no new notification.</div>
+                             </Dropdown.Item>
+                        }
+                        {notifications?.map((notification, index) => {
+                          if (notification.type === 'BOARD_INVITATION') {
+                            return (
+                              <Dropdown.Item className="notification__item" key={index}>
+                                <div className="notification__item__content">
+                                  <strong>{notification?.inviter?.displayName}</strong> had invited you to join the board: <strong>{notification?.board?.title}</strong>
+                                </div>
+                                {notification?.boardInvitation?.status === 'PENDING' &&
+                                  <div className="notification__item__actions">
+                                    <Button variant="success" type="button" size="sm" className="px-4">Accept</Button>
+                                    <Button variant="secondary" type="button" size="sm" className="px-4">Reject</Button>
+                                  </div>
+                                }
+                                {notification?.boardInvitation?.status === 'ACCEPTED' &&
+                                  <div className="notification__item__actions">
+                                    <Badge bg="success">Accepted</Badge>
+                                  </div>
+                                }
+                                {notification?.boardInvitation?.status === 'REJECTED' &&
+                                  <div className="notification__item__actions">
+                                    <Badge bg="secondary">Rejected</Badge>
+                                  </div>
+                                }
+                                <div className="notification__item__actions">
+                                  {/* <Badge bg="info">Wed, Sep 21, 2022 9:05 PM</Badge> */}
+                                  <Badge bg="info">{notification.createdAt && moment(notification.createdAt).format('llll')}</Badge>
+                                </div>
+                              </Dropdown.Item>
+                            )
+                          }
+                        })}
                       </div>
                     </Dropdown.Menu>
                   </Dropdown>

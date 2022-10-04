@@ -13,6 +13,7 @@ import {
   fieldErrorMessage
 } from 'utilities/validators'
 import { inviteUserToBoardAPI } from 'actions/ApiCall'
+import { socketIoInstance } from 'index'
 
 function BoardBar() {
   const board = useSelector(selectCurrentFullBoard)
@@ -25,8 +26,9 @@ function BoardBar() {
     const boardId = board._id
 
     inviteUserToBoardAPI({ inviteeEmail, boardId })
-      .then(() => {
+      .then((invitation) => {
         setValue('inviteeEmail', null)
+        socketIoInstance.emit('c_user_invited_to_board', invitation)
       })
   }
 
@@ -89,7 +91,7 @@ function BoardBar() {
                            />
                            {fieldErrorMessage(errors, 'inviteeEmail')}
                            <Form.Group className="text-right">
-                             <Button variant="success" type="submit" size="sm" className="px-4">Invite</Button>
+                             <Button variant="success" type="submit" size="sm" className="px-4 tqd-send">Invite</Button>
                            </Form.Group>
                          </Form>
                        </div>

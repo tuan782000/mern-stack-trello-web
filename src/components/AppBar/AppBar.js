@@ -1,23 +1,46 @@
-import React, { useEffect } from 'react'
+/* eslint-disable indent */
+import React, { useEffect, useState } from 'react'
 import './AppBar.scss'
 import { Container as BootstrapContainer, Row, Col, InputGroup, FormControl, Dropdown, Button, Badge } from 'react-bootstrap'
 import trungquandevLogo from 'resources/images/logo-trungquandev-transparent-bg-192x192.png'
 import UserAvatar from 'components/Common/UserAvatar'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentUser, signOutUserAPI } from 'redux/user/userSlice'
-import { Link } from 'react-router-dom'
-import { selectCurrentNotifications, fetchInvitationsAPI } from 'redux/notifications/notificationsSlice'
+import { Link, useNavigate } from 'react-router-dom'
+import { selectCurrentNotifications, fetchInvitationsAPI, updateBoardInvitationAPI, addNotification } from 'redux/notifications/notificationsSlice'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
+import { socketIoInstance } from 'index'
 
 function AppBar() {
   const dispatch = useDispatch()
   const user = useSelector(selectCurrentUser)
   const notifications = useSelector(selectCurrentNotifications)
+  const navigate = useNavigate()
+  const [newNotif, setNewNotif] = useState(false)
 
   useEffect(() => {
     dispatch(fetchInvitationsAPI())
-  }, [dispatch])
+    socketIoInstance.on('s_user_invited_to_board', invitation => {
+      if (invitation?.inviteeId === user?._id) {
+        // Thêm cái invitation mới vào redux
+        dispatch(addNotification(invitation))
+        // cập nhật trạng thái là đang có thông báo đến
+        setNewNotif(true)
+      }
+    })
+  }, [dispatch, user])
+
+  const updateBoardInvitation = (action, notification) => {
+    dispatch(updateBoardInvitationAPI({
+      action: action,
+      notificationId: notification._id
+    })).then((res) => {
+      if (res.payload?.boardInvitation?.status === 'ACCEPTED') {
+        navigate(`/b/${res.payload?.boardInvitation?.boardId}`, { replace: false })
+      }
+    })
+  }
 
   return (
     <nav className="navbar-app">
@@ -29,7 +52,7 @@ function AppBar() {
               <div className="item home"><i className="fa fa-home" /></div>
               <div className="item boards">
                 <Link to={`/u/${user?.username}/boards?currentPage=1`}>
-                  <i className="fa fa-columns" />&nbsp;&nbsp;<strong>Boards</strong>
+                  <i className="fa fa-columns" />&nbsp;&nbsp;Boards
                 </Link>
               </div>
               <div className="item search">
@@ -45,9 +68,9 @@ function AppBar() {
           </Col>
           <Col md={2} sm={2} xs={12} className="col-no-padding">
             <div className="app-branding text-center">
-              <a href="https://github.com/tuan782000" target="blank">
+              <a href="https://trungquandev.com" target="blank">
                 <img src={trungquandevLogo} className="top-logo" alt="trunguandev-logo" />
-                <span className="trungquandev-slogan">Trello Web APP</span>
+                <span className="trungquandev-slogan">trungquandev</span>
               </a>
             </div>
           </Col>
@@ -58,21 +81,23 @@ function AppBar() {
               <div className="item notification">
                 <div className='common-dropdown'>
                   <Dropdown autoClose="outside">
-                    <Dropdown.Toggle id="dropdown-basic" size="sm">
-                      {/* <i className="fa fa-bell icon" /> */}
-                      <i className="fa fa-bell icon ring" />
-                    </Dropdown.Toggle>
+                    <div onClick={() => setNewNotif(false)}>
+                      <Dropdown.Toggle id="dropdown-basic" size="sm">
+                        {/* <i className="fa fa-bell icon" /> */}
+                        <i className={`fa fa-bell icon ${newNotif ? 'ring' : ''}`} />
+                      </Dropdown.Toggle>
+                    </div>
 
                     <Dropdown.Menu>
                       <div className="notification__item__header">
-          Notifications
+                        Notifications
                       </div>
 
                       <div className="notification__item__wrapper">
                         {isEmpty(notifications) &&
-                             <Dropdown.Item className="notification__item">
-                               <div className="notification__item__content">You have no new notification.</div>
-                             </Dropdown.Item>
+                          <Dropdown.Item className="notification__item">
+                            <div className="notification__item__content">You have no new notification.</div>
+                          </Dropdown.Item>
                         }
                         {notifications?.map((notification, index) => {
                           if (notification.type === 'BOARD_INVITATION') {
@@ -81,10 +106,26 @@ function AppBar() {
                                 <div className="notification__item__content">
                                   <strong>{notification?.inviter?.displayName}</strong> had invited you to join the board: <strong>{notification?.board?.title}</strong>
                                 </div>
-                                {notification?.boardInvitation?.status === 'PENDING' &&
+                                {notification.boardInvitation?.status === 'PENDING' &&
                                   <div className="notification__item__actions">
-                                    <Button variant="success" type="button" size="sm" className="px-4">Accept</Button>
-                                    <Button variant="secondary" type="button" size="sm" className="px-4">Reject</Button>
+                                    <Button
+                                      variant="success"
+                                      type="button"
+                                      size="sm"
+                                      className="px-4"
+                                      onClick={() => updateBoardInvitation('accept', notification)}
+                                    >
+                                      Accept
+                                    </Button>
+                                    <Button
+                                      variant="secondary"
+                                      type="button"
+                                      size="sm"
+                                      className="px-4"
+                                      onClick={() => updateBoardInvitation('reject', notification)}
+                                    >
+                                      Reject
+                                    </Button>
                                   </div>
                                 }
                                 {notification?.boardInvitation?.status === 'ACCEPTED' &&
@@ -116,7 +157,7 @@ function AppBar() {
                   <div className='common-dropdown'>
                     <Dropdown>
                       <Dropdown.Toggle id="dropdown-basic" size="sm">
-                        <UserAvatar user={user}/>
+                        <UserAvatar user={user} />
                       </Dropdown.Toggle>
 
                       <Dropdown.Menu>

@@ -19,6 +19,11 @@ let persistor = persistStore(store)
 import { injectStore } from 'utilities/customAxios'
 injectStore(store)
 
+import { io } from 'socket.io-client'
+import { API_ROOT } from 'utilities/constants'
+// https://socket.io/how-to/use-with-react-hooks
+export const socketIoInstance = io(API_ROOT)
+
 const container = document.getElementById('root')
 const root = createRoot(container)
 root.render(

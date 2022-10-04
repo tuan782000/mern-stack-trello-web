@@ -10,10 +10,10 @@ export const fetchInvitationsAPI = createAsyncThunk('notifications/fetchInvitati
   const request = await authorizedInstance.get(`${API_ROOT}/v1/invitations`)
   return request.data
 })
-// export const updateBoardInvitationAPI = createAsyncThunk('notifications/updateBoardInvitationAPI', async ({ action, notificationId }) => {
-//   const request = await authorizedInstance.put(`${API_ROOT}/v1/invitations/board/${notificationId}`, { action })
-//   return request.data
-// })
+export const updateBoardInvitationAPI = createAsyncThunk('notifications/updateBoardInvitationAPI', async ({ action, notificationId }) => {
+  const request = await authorizedInstance.put(`${API_ROOT}/v1/invitations/board/${notificationId}`, { action })
+  return request.data
+})
 
 export const notificationsSlice = createSlice({
   name: 'notifications',
@@ -24,29 +24,29 @@ export const notificationsSlice = createSlice({
     },
     updateCurrentNotifications: (state, action) => {
       state.currentNotifications = action.payload
+    },
+    addNotification: (state, action) => {
+      const incomingInvitation = action.payload
+      state.currentNotifications.unshift(incomingInvitation)
     }
-    // addNotification: (state, action) => {
-    //   const incomingInvitation = action.payload
-    //   state.currentNotifications.unshift(incomingInvitation)
-    // }
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchInvitationsAPI.fulfilled, (state, action) => {
         state.currentNotifications = Array.isArray(action.payload) ? action.payload.reverse() : []
       })
-    // .addCase(updateBoardInvitationAPI.fulfilled, (state, action) => {
-    //   const incomingInvitation = action.payload
-    //   const getInvitation = state.currentNotifications.find(i => i._id === incomingInvitation._id)
-    //   getInvitation.boardInvitation = incomingInvitation.boardInvitation
-    // })
+      .addCase(updateBoardInvitationAPI.fulfilled, (state, action) => {
+        const incomingInvitation = action.payload
+        const getInvitation = state.currentNotifications.find(i => i._id === incomingInvitation._id)
+        getInvitation.boardInvitation = incomingInvitation.boardInvitation
+      })
   }
 })
 
 export const {
   clearCurrentNotifications,
-  updateCurrentNotifications
-  // addNotification
+  updateCurrentNotifications,
+  addNotification
 } = notificationsSlice.actions
 
 // Selectors

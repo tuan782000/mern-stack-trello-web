@@ -34,7 +34,7 @@ export const activeBoardSlice = createSlice({
       if (column) {
         const card = column.cards.find(i => i._id === incomingCard._id)
         if (card) {
-          const updateKeys = ['title', 'memberIds', 'description', 'comments', 'cover']
+          const updateKeys = ['title', 'memberIds', 'description', 'comments', 'cover', 'c_CardMembers']
           updateKeys.forEach(key => {
             card[key] = incomingCard[key]
           })
@@ -54,8 +54,17 @@ export const activeBoardSlice = createSlice({
 
       // Sắp xếp lại columns và cards theo các giá trị columnOrder, cardOrder
       fullBoard.columns = mapOrder(fullBoard.columns, fullBoard.columnOrder, '_id')
-      fullBoard.columns.forEach(c => {
-        c.cards = mapOrder(c.cards, c.cardOrder, '_id')
+      fullBoard.columns.forEach(column => {
+        column.cards = mapOrder(column.cards, column.cardOrder, '_id')
+
+        column.cards.forEach(card => {
+          let c_CardMembers = []
+          Array.isArray(card.memberIds) && card.memberIds.forEach(memberId => {
+            const fullMemberInfo = fullBoard.users.find(u => u._id === memberId)
+            if (fullMemberInfo) c_CardMembers.push(fullMemberInfo)
+          })
+          card['c_CardMembers'] = c_CardMembers
+        })
       })
 
       state.currentFullBoard = fullBoard

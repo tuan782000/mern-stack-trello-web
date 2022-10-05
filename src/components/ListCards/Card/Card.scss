@@ -16,7 +16,22 @@ $card-border-radius: 4px;
     border-top-left-radius: $card-border-radius;
     border-top-right-radius: $card-border-radius;
   }
-  div.title {
+  &__base-content {
     padding: 10px;
-  }
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    // div.title {}
+    .general-info {
+      display: flex;
+      gap: 10px;
+      .comments-count, .users-count {
+        i { color: darkcyan; }
+      }
+    }
+    .member__avatars {
+      justify-content: flex-start;
+      padding: 0 0px 5px 0;
+    }
+  } 
 }

@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals'
 import 'font-awesome/css/font-awesome.min.css'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
-import { store } from './redux/store'
+import { store } from 'redux/store'
 import { Provider } from 'react-redux'
 
 // import { BrowserRouter } from 'react-router-dom'

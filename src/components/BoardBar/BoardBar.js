@@ -14,6 +14,7 @@ import {
 } from 'utilities/validators'
 import { inviteUserToBoardAPI } from 'actions/ApiCall'
 import { socketIoInstance } from 'index'
+import { USER_SELECT_POPOVER_TYPE_BOARD_MEMBERS } from 'utilities/constants'
 
 function BoardBar() {
   const board = useSelector(selectCurrentFullBoard)
@@ -63,6 +64,7 @@ function BoardBar() {
                     <UserSelectPopover
                       label={`+${board?.totalUsers - 3}`}
                       users={board?.users}
+                      type={USER_SELECT_POPOVER_TYPE_BOARD_MEMBERS}
                     />
                   </div>
                 }

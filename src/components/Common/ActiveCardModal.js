@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { Container as BootstrapContainer, Row, Col, Modal, Form } from 'react-bootstrap'
-import { useForm } from 'react-hook-form'
 import MDEditor from '@uiw/react-md-editor'
 import rehypeSanitize from 'rehype-sanitize'
 import { singleFileValidator } from 'utilities/validators'
@@ -19,12 +18,14 @@ import { saveContentAfterPressEnter, selectAllInlineText } from 'utilities/conte
 import { updateCardAPI } from 'actions/ApiCall'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
+import { selectCurrentFullBoard } from 'redux/activeBoard/activeBoardSlice'
+import { USER_SELECT_POPOVER_TYPE_CARD_MEMBERS, CARD_MEMBERS_ACTION_PUSH } from 'utilities/constants'
 
 function ActiveCardModal() {
   const dispatch = useDispatch()
-  const { register, handleSubmit, formState: { errors }, reset } = useForm()
   const currentUser = useSelector(selectCurrentUser)
   const currentActiveCard = useSelector(selectCurrentActiveCard)
+  const board = useSelector(selectCurrentFullBoard)
 
   const [cardDescription, setCardDescription] = useState(currentActiveCard?.description)
   const [markdownMode, setMarkdownMode] = useState(false)
@@ -84,10 +85,22 @@ function ActiveCardModal() {
     }
   }
 
+  const beforeUpdateCardMembers = (userId, action) => {
+    updateCard({ incomingMember: { userId, action } })
+  }
+
   const updateCard = async (updateData) => {
-    const updatedcard = await updateCardAPI(currentActiveCard._id, updateData)
-    dispatch(updateCurrentActiveCard(updatedcard))
-    dispatch(updateCardInBoard(updatedcard))
+    const updatedCard = await updateCardAPI(currentActiveCard._id, updateData)
+
+    let c_CardMembers = []
+    Array.isArray(updatedCard.memberIds) && updatedCard.memberIds.forEach(memberId => {
+      const fullMemberInfo = board.users.find(u => u._id === memberId)
+      if (fullMemberInfo) c_CardMembers.push(fullMemberInfo)
+    })
+    updatedCard['c_CardMembers'] = c_CardMembers
+
+    dispatch(updateCurrentActiveCard(updatedCard))
+    dispatch(updateCardInBoard(updatedCard))
     return updateCard
   }
 
@@ -146,23 +159,22 @@ function ActiveCardModal() {
               <Col md={9}>
                 <div className="card__element__title">Members</div>
                 <div className="member__avatars mb-4">
+                  {!isEmpty(currentActiveCard?.c_CardMembers) && currentActiveCard?.c_CardMembers.map((u, index) => (
+                    <div className="member__avatars__item" key={index}>
+                      <UserAvatar
+                        user={u}
+                        width="28px"
+                        height="28px"
+                      />
+                    </div>
+                  ))}
                   <div className="member__avatars__item">
-                    <img src="https://trungquandev.com/wp-content/uploads/2021/01/trungquandev-avatar-2021.jpg" alt="avatar-trungquandev" title="trungquandev" />
-                  </div>
-                  <div className="member__avatars__item">
-                    <img src="https://trungquandev.com/wp-content/uploads/2018/04/trungquandev-avatar.jpeg" alt="avatar-trungquandev" title="trungquandev" />
-                  </div>
-                  <div className="member__avatars__item">
-                    <img src="https://trungquandev.com/wp-content/uploads/2019/03/trungquandev-avatar-01-scaled.jpg" alt="avatar-trungquandev" title="trungquandev" />
-                  </div>
-                  <div className="member__avatars__item">
-                    <img src="https://trungquandev.com/wp-content/uploads/2017/03/aboutme.jpg" alt="avatar-trungquandev" title="trungquandev" />
-                  </div>
-                  <div className="member__avatars__item">
-                    <img src="https://trungquandev.com/wp-content/uploads/2019/06/trungquandev-cat-avatar.png" alt="avatar-trungquandev" title="trungquandev" />
-                  </div>
-                  <div className="member__avatars__item">
-                    <UserSelectPopover />
+                    <UserSelectPopover
+                      users={board?.users}
+                      type={USER_SELECT_POPOVER_TYPE_CARD_MEMBERS}
+                      cardMemberIds={currentActiveCard?.memberIds}
+                      beforeUpdateCardMembers={beforeUpdateCardMembers}
+                    />
                   </div>
                 </div>
                 <div className="card__modal__description mb-4">
@@ -247,12 +259,14 @@ function ActiveCardModal() {
                 </div>
               </Col>
               <Col md={3}>
-                <div className="menu__group">
-                  <div className="menu__group__title">Suggested</div>
-                  <div className="menu__group__item">
-                    <i className="fa fa-user-circle-o" /> Join
-                  </div>
-                </div>
+                {!currentActiveCard?.memberIds?.includes(currentUser._id) &&
+                 <div className="menu__group">
+                   <div className="menu__group__title">Suggested</div>
+                   <div className="menu__group__item" onClick={() => beforeUpdateCardMembers(currentUser._id, CARD_MEMBERS_ACTION_PUSH)}>
+                     <i className="fa fa-user-circle-o" /> Join
+                   </div>
+                 </div>
+                }
                 <div className="menu__group">
                   <div className="menu__group__title">Add to card</div>
                   <div className="menu__group__item">

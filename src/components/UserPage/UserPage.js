@@ -133,7 +133,7 @@ const UserPage = () => {
               <div className="notice mt-5">
                 <h4>Manage your personal information</h4>
                 <div className="notice__message">
-                  <p>This is an awesome <a href="https://trungquandev.com/khoa-hoc-lap-trinh-mern-stack-100-du-an-thuc-te-chat-luong/" target="blank" style={{ 'textDecoration': 'none' }}>MERN Stack course</a> in the field of programming. This course teach everyone how to create a Trello web app clone.</p>
+                  <p>This is an awesome <a href="https://www.facebook.com/phonghan1402" target="blank" style={{ 'textDecoration': 'none' }}>MERN Stack course</a> in the field of programming. This course teach everyone how to create a Trello web app clone.</p>
                   <p className="mb-0">To learn more, view our <a href="#" target="blank" style={{ 'textDecoration': 'none' }}>Terms of Service</a> or <a href="#" target="blank" style={{ 'textDecoration': 'none' }}>Privacy Policy</a>.</p>
                 </div>
               </div>
@@ -224,12 +224,12 @@ const UserPage = () => {
               <div className="notice mt-5">
                 <h4>System Settings</h4>
                 <div className="notice__message">
-                  <p>This is an awesome <a href="https://trungquandev.com/khoa-hoc-lap-trinh-mern-stack-100-du-an-thuc-te-chat-luong/" target="blank" style={{ 'textDecoration': 'none' }}>MERN Stack course</a> in the field of programming. This course teach everyone how to create a Trello web app clone.</p>
+                  <p>This is an awesome <a href="https://www.facebook.com/phonghan1402" target="blank" style={{ 'textDecoration': 'none' }}>MERN Stack course</a> in the field of programming. This course teach everyone how to create a Trello web app clone.</p>
                   <p>To learn more, view our <a href="#" target="blank" style={{ 'textDecoration': 'none' }}>Terms of Service</a> or <a href="#" target="blank" style={{ 'textDecoration': 'none' }}>Privacy Policy</a>.</p>
-                  <p>Author: <strong>Trungquandev Official</strong></p>
-                  <p>Blog: <a href="https://trungquandev.com" target="blank" style={{ 'textDecoration': 'none' }}>https://trungquandev.com</a></p>
-                  <p>CV: <a href="https://cv.trungquandev.com" target="blank" style={{ 'textDecoration': 'none' }}>https://cv.trungquandev.com</a></p>
-                  <p>Yoututbe: <a href="https://www.youtube.com/c/TrungquandevOfficial" target="blank" style={{ 'textDecoration': 'none' }}>https://www.youtube.com/c/TrungquandevOfficial</a></p>
+                  <p>Author: <strong>Ho Nguyen Minh Phong</strong></p>
+                  <p>Blog: <a href="https://www.facebook.com/phonghan1402" target="blank" style={{ 'textDecoration': 'none' }}>https://www.facebook.com/phonghan1402</a></p>
+                  <p>CV: <a href="https://www.facebook.com/phonghan1402" target="blank" style={{ 'textDecoration': 'none' }}>https://www.facebook.com/phonghan1402</a></p>
+                  <p>Facebook: <a href="https://www.facebook.com/phonghan1402" target="blank" style={{ 'textDecoration': 'none' }}>https://www.facebook.com/phonghan1402</a></p>
                 </div>
               </div>
             </div>
@@ -243,12 +243,12 @@ const UserPage = () => {
               <div className="notice mt-5">
                 <h4>Any Questions?</h4>
                 <div className="notice__message">
-                  <p>This is an awesome <a href="https://trungquandev.com/khoa-hoc-lap-trinh-mern-stack-100-du-an-thuc-te-chat-luong/" target="blank" style={{ 'textDecoration': 'none' }}>MERN Stack course</a> in the field of programming. This course teach everyone how to create a Trello web app clone.</p>
+                  <p>This is an awesome <a href="https://www.facebook.com/phonghan1402" target="blank" style={{ 'textDecoration': 'none' }}>MERN Stack course</a> in the field of programming. This course teach everyone how to create a Trello web app clone.</p>
                   <p>To learn more, view our <a href="#" target="blank" style={{ 'textDecoration': 'none' }}>Terms of Service</a> or <a href="#" target="blank" style={{ 'textDecoration': 'none' }}>Privacy Policy</a>.</p>
-                  <p>Author: <strong>Trungquandev Official</strong></p>
-                  <p>Blog: <a href="https://trungquandev.com" target="blank" style={{ 'textDecoration': 'none' }}>https://trungquandev.com</a></p>
-                  <p>CV: <a href="https://cv.trungquandev.com" target="blank" style={{ 'textDecoration': 'none' }}>https://cv.trungquandev.com</a></p>
-                  <p>Yoututbe: <a href="https://www.youtube.com/c/TrungquandevOfficial" target="blank" style={{ 'textDecoration': 'none' }}>https://www.youtube.com/c/TrungquandevOfficial</a></p>
+                  <p>Author: <strong>Ho Nguyen Minh Phong</strong></p>
+                  <p>Blog: <a href="https://www.facebook.com/phonghan1402" target="blank" style={{ 'textDecoration': 'none' }}>https://www.facebook.com/phonghan1402</a></p>
+                  <p>CV: <a href="https://www.facebook.com/phonghan1402" target="blank" style={{ 'textDecoration': 'none' }}>https://www.facebook.com/phonghan1402</a></p>
+                  <p>Facebook: <a href="https://www.facebook.com/phonghan1402" target="blank" style={{ 'textDecoration': 'none' }}>https://www.facebook.com/phonghan1402</a></p>
                 </div>
               </div>
             </div>

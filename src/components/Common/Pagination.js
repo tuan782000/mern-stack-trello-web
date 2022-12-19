@@ -11,8 +11,8 @@ function CustomPagination({ totalPages, itemsPerPage=12, currentPage=1, onPageCh
   // Invoke when user click to request another page.
   const handlePageClick = (event) => {
     // console.log(`User requested page number ${(event.selected + 1)}`)
-    const selectedPage = event.selecte + 1
-    onPageChange(event.selected + 1)
+    const selectedPage = event.selected + 1
+    onPageChange(selectedPage)
   }
 
   return (

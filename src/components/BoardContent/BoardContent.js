@@ -33,7 +33,7 @@ function BoardContent() {
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
   const onNewColumnTitleChange = (e) => setNewColumnTitle(e.target.value)
-  // Reload lại trang, reload giao diện ||
+
   const { boardId } = useParams()
 
   useEffect(() => {

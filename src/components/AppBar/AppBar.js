@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import './AppBar.scss'
 import { Container as BootstrapContainer, Row, Col, InputGroup, FormControl, Dropdown, Button, Badge } from 'react-bootstrap'
-import trungquandevLogo from 'resources/images/logo-trungquandev-transparent-bg-192x192.png'
+import logo from 'resources/images/logo-trungquandev-transparent-bg-192x192.png'
 import UserAvatar from 'components/Common/UserAvatar'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentUser, signOutUserAPI } from 'redux/user/userSlice'
@@ -68,9 +68,9 @@ function AppBar() {
           </Col>
           <Col md={2} sm={2} xs={12} className="col-no-padding">
             <div className="app-branding text-center">
-              <a href="https://trungquandev.com" target="blank">
-                <img src={trungquandevLogo} className="top-logo" alt="trunguandev-logo" />
-                <span className="trungquandev-slogan">trungquandev</span>
+              <a href="https://www.facebook.com/phonghan1402" target="blank">
+                <img src={logo} className="top-logo" alt="logo" />
+                <span className="trungquandev-slogan">Trello Web</span>
               </a>
             </div>
           </Col>

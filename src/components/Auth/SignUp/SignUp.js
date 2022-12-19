@@ -8,7 +8,7 @@ import {
   EMAIL_RULE_MESSAGE,
   fieldErrorMessage
 } from 'utilities/validators'
-import { signUpUserApi } from 'actions/ApiCall'
+import { signUpUserAPI } from 'actions/ApiCall'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 
@@ -17,7 +17,7 @@ function SignUp() {
   const navigate = useNavigate()
 
   const onSubmitSignUp = (data) => {
-    toast.promise(signUpUserApi(data), { pending: 'Signin up ...' })
+    toast.promise(signUpUserAPI(data), { pending: 'Signin up ...' })
       .then(user => {
         navigate(`/signIn?successEmail=${user.email}`, { replace: true })
       })

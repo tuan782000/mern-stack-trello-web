@@ -34,7 +34,7 @@ export const updateCardAPI = async (id, data) => {
   return request.data
 }
 
-export const signUpUserApi = async (data) => {
+export const signUpUserAPI = async (data) => {
   const request = await authorizedAxiosInstance.post(`${API_ROOT}/v1/users/sign_up`, data)
   toast.success('Account created successfully! Please check your email and verify your account before sign-in!', { theme: 'colored' })
   return request.data
@@ -46,8 +46,8 @@ export const verifyUserAPI = async (data) => {
   return request.data
 }
 
-export const refreshTokenAPI = async (data) => {
-  const request = await authorizedAxiosInstance.get(`${API_ROOT}/v1/users/refresh_token`, data)
+export const refreshTokenAPI = async () => {
+  const request = await authorizedAxiosInstance.get(`${API_ROOT}/v1/users/refresh_token`)
   return request.data
 }
 
@@ -66,4 +66,4 @@ export const inviteUserToBoardAPI = async (data) => {
   const request = await authorizedAxiosInstance.post(`${API_ROOT}/v1/invitations/board`, data)
   toast.success('User invited to board successfuly!')
   return request.data
- }
+}
